@@ -1,5 +1,8 @@
 # fmt: off
 
+import inspect
+import logging
+import pprint
 from abc import ABCMeta
 from typing import Any, Dict, List
 
@@ -58,7 +61,7 @@ arg_codes = {
 
 class EPSGProjectionMeta(ABCMeta):
     @staticmethod
-    def init_args(parameters: List[Dict[str, Any]]):
+    def init_args(parameters: List[Dict[str, Any]], proj: Projection):
         all_ = dict(
             (arg_codes[elt["id"]["code"]], elt["value"]) for elt in parameters
         )
@@ -67,10 +70,16 @@ class EPSGProjectionMeta(ABCMeta):
                 all_.pop("standard_parallel_1"),
                 all_.pop("standard_parallel_2"),
             )
-        if (
-            "standard_parallel_1" in all_
-        ):  # TODO not allowed in some definitions
-            all_.pop("standard_parallel_1")
+        # Get the arguments for the selected CRS projection
+        init_args = inspect.getargs(proj.__init__.__code__).args
+        remove_args = list(
+            key for key, _value in all_.items() if key not in init_args
+        )
+
+        for key in remove_args:
+            logging.warning(f"argument '{key}' ignored")
+            del all_[key]
+
         return all_
 
     @staticmethod
@@ -99,12 +108,15 @@ class EPSGProjectionMeta(ABCMeta):
 
         crs = CRS(identifier)
         basic_dict = crs.to_dict()
+        logging.debug(pprint.pformat(basic_dict))
         base_class = base_classes.get(basic_dict["proj"], Projection)
+        logging.debug(f"Generate a class based on {base_class.__name__}")
 
         transformer = Transformer.from_proj(
             Proj("epsg:4326"), Proj(crs), always_xy=True
         )
         attr_dict = {**crs.to_json_dict(), **attr_dict}
+        logging.debug(f"Based on {pprint.pformat(attr_dict)}")
 
         if base_class is Projection:
             attr_dict["threshold"] = 1e4
@@ -125,7 +137,7 @@ class EPSGProjectionMeta(ABCMeta):
             base_class.__init__(
                 self,
                 **EPSGProjectionMeta.init_args(
-                    attr_dict["conversion"]["parameters"]
+                    attr_dict["conversion"]["parameters"], base_class
                 ),
                 globe=globe,
             )
