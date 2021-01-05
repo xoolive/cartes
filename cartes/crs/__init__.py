@@ -4,7 +4,7 @@ import warnings
 from cartopy.crs import *  # noqa: F401, F403
 
 from . import meta
-from .info import valid_crs  # noqa: F401
+from .info import query_crs  # noqa: F401
 
 # Silence a fiona warning
 warnings.simplefilter(action="ignore", category=UserWarning)
@@ -23,8 +23,7 @@ Lambert93 = meta.EPSG_2154
 
 # Official projection in Sweden (adjusted to the whole country)
 # This record seems to be centered on Stockholm agglomeration
-class ST74(metaclass=meta.EPSGProjectionMeta):
-    identifier = "EPSG:3152"
+class ST74(meta.EPSG_3152):
     bbox = {
         "east_longitude": 24.17,
         "north_latitude": 69.07,
@@ -34,8 +33,7 @@ class ST74(metaclass=meta.EPSGProjectionMeta):
 
 
 # Official projection in Japan (adjusted to the whole country)
-class JGD2000(metaclass=meta.EPSGProjectionMeta):
-    identifier = "EPSG:2451"
+class JGD2000(meta.EPSG_2451):
     bbox = {
         "east_longitude": 157.65,
         "north_latitude": 46.05,
@@ -56,8 +54,7 @@ GeoscienceAustraliaLambert = meta.EPSG_3112
 
 # Official projection in Canada
 # Bounding box adjusted because of strong distortions
-class StatisticsCanadaLambert(metaclass=meta.EPSGProjectionMeta):
-    identifier = "EPSG:3348"
+class StatisticsCanadaLambert(meta.EPSG_3348):
     bbox = {
         "east_longitude": -50.0,
         "north_latitude": 85.0,
@@ -77,8 +74,7 @@ Korea2000 = meta.EPSG_5179
 
 
 # Official projection in Latin America
-class SIRGAS2000(metaclass=meta.EPSGProjectionMeta):
-    identifier = "EPSG:5641"
+class SIRGAS2000(meta.EPSG_5641):
     bbox = {
         "east_longitude": -25.28,
         "north_latitude": 32.72,
@@ -88,8 +84,7 @@ class SIRGAS2000(metaclass=meta.EPSGProjectionMeta):
 
 
 # Official projection in Germany
-class GaussKruger(metaclass=meta.EPSGProjectionMeta):
-    identifier = "EPSG:5680"
+class GaussKruger(meta.EPSG_5680):
     bbox = {
         "east_longitude": 15.0,
         "north_latitude": 55.09,

@@ -88,7 +88,16 @@ class EPSGProjectionMeta(ABCMeta):
         )
 
     def __new__(metacls, name, bases, attr_dict):
-        crs = CRS(attr_dict["identifier"])
+        identifier = attr_dict.get("identifier", None)
+        if identifier is None:
+            for base in bases:
+                identifier = vars(base).get("identifier", None)
+                if identifier is not None:
+                    break
+            else:  # not found
+                raise TypeError("No identifier in class or parent classes.")
+
+        crs = CRS(identifier)
         basic_dict = crs.to_dict()
         base_class = base_classes.get(basic_dict["proj"], Projection)
 

@@ -5,7 +5,7 @@ from shapely.geometry import shape
 from ..core import GeoObject
 
 
-def valid_crs(area: GeoObject):
+def query_crs(area: GeoObject):
     """Returns a list of valid CRS according to a GeoObject."""
     msg = "The argument must implement the __geo_interface__ protocol"
     if not isinstance(area, GeoObject):
