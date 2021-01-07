@@ -1,5 +1,6 @@
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 try:
@@ -27,10 +28,11 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "pyproj>=3.0",
+        "pandas",
         "Cartopy",
         "Shapely",
-        # "requests",
-        # "appdirs",  # proper configuration directories
+        "requests",
+        "appdirs",  # proper configuration directories
     ],
     classifiers=[
         # How mature is this project? Common values are
