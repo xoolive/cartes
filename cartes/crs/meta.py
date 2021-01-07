@@ -129,10 +129,12 @@ class EPSGProjectionMeta(ABCMeta):
             if ellipse is not None:
                 globe = Globe(ellipse=ellipse)
             else:
-                globe = Globe(
-                    semimajor_axis=basic_dict["a"],
-                    inverse_flattening=basic_dict["rf"],
-                )
+                a, rf = basic_dict.get("a", None), basic_dict.get("rf", None)
+                if a is None or rf is None:
+                    msg = f"Fallback to regular Projection with {crs.to_dict()}"
+                    logging.warning(msg)
+                    return Projection.__init__(self, crs.to_dict())
+                globe = Globe(semimajor_axis=a, inverse_flattening=rf,)
 
             base_class.__init__(
                 self,

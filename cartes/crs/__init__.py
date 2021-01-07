@@ -1,10 +1,12 @@
+# type: ignore
+
 import warnings
 
 # All projections first come from the regular Cartopy CRS module
 from cartopy.crs import *  # noqa: F401, F403
 
 from . import meta
-from .info import query_crs  # noqa: F401
+from .info import valid_crs  # noqa: F401
 
 # Silence a fiona warning
 warnings.simplefilter(action="ignore", category=UserWarning)
