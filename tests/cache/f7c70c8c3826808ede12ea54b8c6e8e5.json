@@ -1,0 +1,60 @@
+{
+  "place_id": 154834803,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 261558997,
+  "lat": "43.60783095",
+  "lon": "1.4411195508590957",
+  "display_name": "Mus\u00e9e Saint-Raymond, 1, Place Saint-Sernin, Place Occitane, Capitole, Toulouse Centre, Toulouse, Haute-Garonne, Occitanie, France m\u00e9tropolitaine, 31000, France",
+  "address": {
+    "tourism": "Mus\u00e9e Saint-Raymond",
+    "house_number": "1",
+    "road": "Place Saint-Sernin",
+    "neighbourhood": "Place Occitane",
+    "suburb": "Toulouse Centre",
+    "city": "Toulouse",
+    "municipality": "Toulouse",
+    "county": "Haute-Garonne",
+    "state": "Occitanie",
+    "country": "France",
+    "postcode": "31000",
+    "country_code": "fr"
+  },
+  "boundingbox": [
+    "43.6076937",
+    "43.6079674",
+    "1.4408933",
+    "1.4413437"
+  ],
+  "geojson": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          1.4408933,
+          43.6078026
+        ],
+        [
+          1.4409923,
+          43.6076937
+        ],
+        [
+          1.4411156,
+          43.6077518
+        ],
+        [
+          1.4413437,
+          43.6078593
+        ],
+        [
+          1.4412552,
+          43.6079674
+        ],
+        [
+          1.4408933,
+          43.6078026
+        ]
+      ]
+    ]
+  }
+}
