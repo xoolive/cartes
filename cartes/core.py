@@ -25,6 +25,37 @@ class GeoObject(ABC):
         return shape(self.__geo_interface__)
 
     @property
+    def ortho_shape(self):
+        shape_ = shape(self)
+        lon, lat = shape_.centroid.coords[0]
+        proj = Orthographic(lon, lat)
+        transformer = Transformer.from_proj(
+            Proj("EPSG:4326"), Proj(proj.proj4_init), always_xy=True
+        )
+        return transform(transformer.transform, shape_)
+
+    @property
+    def equivalent_shape(self):
+        shape_ = shape(self)
+        bounds = self.bounds
+        proj = Proj(
+            proj="aea",  # equivalent projection
+            lat_1=bounds[1],
+            lat_2=bounds[3],
+            lat_0=(bounds[1] + bounds[3]) / 2,
+            lon_0=(bounds[0] + bounds[2]) / 2,
+        )
+
+        transformer = Transformer.from_proj(
+            Proj("EPSG:4326"), proj, always_xy=True
+        )
+        return transform(transformer.transform, shape_)
+
+    @property
+    def area(self) -> float:
+        return self.equivalent_shape.area
+
+    @property
     def bounds(self) -> Tuple[float, float, float, float]:
         return self.shape.bounds
 
@@ -44,13 +75,7 @@ class GeoObject(ABC):
         return self.shape.type
 
     def _repr_svg_(self):
-        shape_ = shape(self)
-        lon, lat = shape_.centroid.coords[0]
-        proj = Orthographic(lon, lat)
-        transformer = Transformer.from_proj(
-            Proj("EPSG:4326"), Proj(proj.proj4_init), always_xy=True
-        )
-        return transform(transformer.transform, shape_)._repr_svg_()
+        return self.ortho_shape._repr_svg_()
 
     def valid_crs(self) -> pd.DataFrame:
         from .crs.info import valid_crs
