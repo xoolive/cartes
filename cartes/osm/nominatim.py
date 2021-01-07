@@ -4,13 +4,13 @@ from shapely.geometry import mapping, shape
 
 from ..core import GeoObject
 from ..utils.descriptors import OrientedShape
-from ..utils.mixins import HTMLAttrMixin, HTMLTitleMixin
+from ..utils.mixins import HBoxMixin, HTMLAttrMixin, HTMLTitleMixin
 from .requests import json_request
 
 T = TypeVar("T", bound="Nominatim")
 
 
-class Nominatim(GeoObject, HTMLTitleMixin, HTMLAttrMixin):
+class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
 
     shape = OrientedShape()
 
