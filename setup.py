@@ -1,4 +1,6 @@
+import io
 import os
+import re
 
 from setuptools import find_packages, setup
 
@@ -13,9 +15,29 @@ except FileNotFoundError:
     # Forcing the inclusion of the readme in the archive seems overkill
     long_description = ""
 
+
+def read(path, encoding="utf-8"):
+    path = os.path.join(os.path.dirname(__file__), path)
+    with io.open(path, encoding=encoding) as fp:
+        return fp.read()
+
+
+def version(path):
+    """Obtain the package version from a python file e.g. pkg/__init__.py
+    See <https://packaging.python.org/en/latest/single_source_version.html>.
+    """
+    version_file = read(path)
+    version_match = re.search(
+        r"""^__version__ = ['"]([^'"]*)['"]""", version_file, re.M
+    )
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
+
 setup(
     name="cartes",
-    version="1.0",
+    version=version("cartes/__init__.py"),
     author="Xavier Olive",
     author_email="git@xoolive.org",
     url="https://github.com/xoolive/cartes/",
@@ -24,11 +46,13 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
-    package_data={"cartes": ["py.typed"]},
+    package_data={"cartes": ["py.typed", "readme.md"]},
     python_requires=">=3.6",
     install_requires=[
-        "pyproj>=3.0",
+        "matplotlib",
+        "scipy",  # missing dependency for cartopy
         "pandas",
+        "pyproj>=3.0",
         "Cartopy",
         "Shapely",
         "requests",

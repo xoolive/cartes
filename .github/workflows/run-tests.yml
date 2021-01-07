@@ -1,0 +1,27 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          sudo apt install -y libgeos-dev libproj-dev proj-bin proj-data
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade numpy pyproj  # dependency for cartopy
+          python -m pip install --upgrade pytest
+          python -m pip install -e .
+      - name: Run tests
+        run: |
+          pytest
