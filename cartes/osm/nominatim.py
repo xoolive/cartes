@@ -19,7 +19,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         "osm_type",
         "osm_id",
         "address",
-        "class",
+        "category",
         "type_",
         "importance",
     ]
@@ -66,7 +66,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     def search(cls: Type[T], name: str, **kwargs) -> Optional[T]:
         params = dict(
             q=name,
-            format="json",
+            format="jsonv2",
             limit=1,
             dedupe=False,
             polygon_geojson=True,
@@ -87,7 +87,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         cls: Type[T], latitude: float, longitude: float, **kwargs
     ) -> Optional[T]:
         params = dict(
-            lat=latitude, lon=longitude, format="json", polygon_geojson=True,
+            lat=latitude, lon=longitude, format="jsonv2", polygon_geojson=True,
         )
         json = json_request(
             cls.endpoint.rstrip("/") + "/" + "reverse",
@@ -103,7 +103,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     def lookup(
         cls: Type[T], osm_ids: Union[str, List[str]], **kwargs
     ) -> Union[None, T, List[T]]:
-        params = dict(osm_ids=osm_ids, format="json", polygon_geojson=True,)
+        params = dict(osm_ids=osm_ids, format="jsonv2", polygon_geojson=True,)
         json = json_request(
             cls.endpoint.rstrip("/") + "/" + "lookup",
             timeout=30,

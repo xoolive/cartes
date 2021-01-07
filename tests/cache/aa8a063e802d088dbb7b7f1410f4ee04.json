@@ -13,7 +13,8 @@
     "lat": "43.60444985",
     "lon": "1.4444940151085732",
     "display_name": "Capitole - Mairie de Toulouse, Place du Capitole, Place Occitane, Capitole, Toulouse Centre, Toulouse, Haute-Garonne, Occitanie, France m\u00e9tropolitaine, 31000, France",
-    "class": "tourism",
+    "place_rank": 30,
+    "category": "tourism",
     "type": "attraction",
     "importance": 0.3759772939504354,
     "address": {

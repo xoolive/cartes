@@ -23,7 +23,7 @@ def test_lookup() -> None:
     capitole = Nominatim.lookup("R367073")
     assert capitole is not None
     assert capitole.city == "Toulouse"  # type: ignore
-    assert capitole.class_ == "tourism"  # type: ignore
+    assert capitole.category == "tourism"  # type: ignore
 
 
 def test_reverse() -> None:

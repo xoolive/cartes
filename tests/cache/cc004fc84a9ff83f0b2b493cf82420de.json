@@ -5,6 +5,12 @@
   "osm_id": 261558997,
   "lat": "43.60783095",
   "lon": "1.4411195508590957",
+  "place_rank": 30,
+  "category": "tourism",
+  "type": "museum",
+  "importance": 0.27381125651268035,
+  "addresstype": "tourism",
+  "name": "Mus\u00e9e Saint-Raymond",
   "display_name": "Mus\u00e9e Saint-Raymond, 1, Place Saint-Sernin, Place Occitane, Capitole, Toulouse Centre, Toulouse, Haute-Garonne, Occitanie, France m\u00e9tropolitaine, 31000, France",
   "address": {
     "tourism": "Mus\u00e9e Saint-Raymond",
