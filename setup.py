@@ -57,6 +57,8 @@ setup(
         "Shapely",
         "requests",
         "appdirs",  # proper configuration directories
+        "tqdm",
+        "geopandas",
     ],
     classifiers=[
         # How mature is this project? Common values are
