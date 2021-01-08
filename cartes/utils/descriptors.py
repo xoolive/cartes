@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from shapely.geometry import MultiPolygon, Polygon, base, polygon
+from .geometry import reorient
 
 
 class Descriptor:
@@ -24,14 +24,6 @@ class DirectoryCreateIfNotExists(Descriptor):
         if not path.exists():
             path.mkdir(parents=True)
         setattr(obj, self.private_name, path)
-
-
-def reorient(shape: base.BaseGeometry, orientation=-1) -> base.BaseGeometry:
-    if isinstance(shape, Polygon):
-        return polygon.orient(shape, orientation)
-    if isinstance(shape, MultiPolygon):
-        return MultiPolygon(reorient(p) for p in shape)
-    return shape
 
 
 class OrientedShape(Descriptor):
