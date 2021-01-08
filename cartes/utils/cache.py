@@ -1,3 +1,4 @@
+import functools
 from pathlib import Path
 from typing import Union
 
@@ -38,6 +39,7 @@ class CacheResults:
         self.reader = reader
 
     def __call__(self, function):
-        return CacheFunction(
+        cache_function = CacheFunction(
             function, self.cache_dir, self.hashing, self.writer, self.reader
         )
+        return functools.wraps(function)(cache_function)
