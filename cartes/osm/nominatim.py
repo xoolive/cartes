@@ -5,12 +5,21 @@ from shapely.geometry import mapping, shape
 from ..core import GeoObject
 from ..utils.descriptors import OrientedShape
 from ..utils.mixins import HBoxMixin, HTMLAttrMixin, HTMLTitleMixin
-from .requests import json_request
+from .requests import GeoJSONType, JSONType, json_request
 
 T = TypeVar("T", bound="Nominatim")
 
 
 class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
+    """A class to parse Nominatim results.
+
+    A Nominatim object is built based on JSON results of Nominatim requests.
+    Nominatim requests are based on corresponding class methods:
+
+    - Nominatim.search performs a search based on text;
+    - Nominatim.reverse performs a search based on latlon coordinates;
+    - Nominatim.lookup performs a search based on an OSM identifier.
+    """
 
     shape = OrientedShape()
 
@@ -24,16 +33,16 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         "importance",
     ]
 
-    def __init__(self, json) -> None:
+    def __init__(self, json: JSONType) -> None:
         super().__init__()
         self.json = json
         self.shape = shape(self.json["geojson"])
 
     @property
-    def __geo_interface__(self):
+    def __geo_interface__(self) -> GeoJSONType:
         return mapping(self.shape)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{type(self).__name__} {self.json}"
 
     def __getattr__(self, name):
@@ -49,12 +58,12 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         return value
 
     @property
-    def address(self):
+    def address(self) -> str:
         if address := self.json.get("address", None):
             return address
         return self.json["display_name"].split(", ")
 
-    def _repr_html_(self):
+    def _repr_html_(self) -> str:
         return (
             super()._repr_html_()
             + "<div style='float: left; margin: 10px;'>"
@@ -64,6 +73,12 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
 
     @classmethod
     def search(cls: Type[T], name: str, **kwargs) -> Optional[T]:
+        """Performs a Nominatim search request.
+
+        The request is based on the name passed in parameter.
+        >>> Nominatim.search("Toulouse")
+
+        """
         params = dict(
             q=name,
             format="jsonv2",
@@ -86,8 +101,17 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     def reverse(
         cls: Type[T], latitude: float, longitude: float, **kwargs
     ) -> Optional[T]:
+        """Performs a Nominatim search request.
+
+        The request is based on the latlon coordinates of the element.
+        >>> Nominatim.reverse(43.608, 1.442)
+        """
+
         params = dict(
-            lat=latitude, lon=longitude, format="jsonv2", polygon_geojson=True,
+            lat=latitude,
+            lon=longitude,
+            format="jsonv2",
+            polygon_geojson=True,
         )
         json = json_request(
             cls.endpoint.rstrip("/") + "/" + "reverse",
@@ -103,7 +127,18 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     def lookup(
         cls: Type[T], osm_ids: Union[str, List[str]], **kwargs
     ) -> Union[None, T, List[T]]:
-        params = dict(osm_ids=osm_ids, format="jsonv2", polygon_geojson=True,)
+        """Performs a Nominatim search request.
+
+        The request is based on the OSM id of the element. The prefix
+        determines the type of the OSM object (N for node, W for way, R for
+        relation)
+        >>> Nominatim.lookup("R367073")
+        """
+        params = dict(
+            osm_ids=osm_ids,
+            format="jsonv2",
+            polygon_geojson=True,
+        )
         json = json_request(
             cls.endpoint.rstrip("/") + "/" + "lookup",
             timeout=30,

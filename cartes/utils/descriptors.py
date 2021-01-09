@@ -1,22 +1,27 @@
 from pathlib import Path
+from typing import Generic, TypeVar, Union
+
+from shapely.geometry.base import BaseGeometry
 
 from .geometry import reorient
 
+T = TypeVar("T")
 
-class Descriptor:
-    def __set_name__(self, obj, name):
+
+class Descriptor(Generic[T]):
+    def __set_name__(self, obj, name: str) -> None:
         self.public_name = name
         self.private_name = "_" + name
 
-    def __get__(self, obj, objtype=None):
+    def __get__(self, obj, objtype=None) -> T:
         return getattr(obj, self.private_name)
 
-    def __set__(self, obj, path):
-        setattr(obj, self.private_name, path)
+    def __set__(self, obj, value: T) -> None:
+        setattr(obj, self.private_name, value)
 
 
-class DirectoryCreateIfNotExists(Descriptor):
-    def __set__(self, obj, path):
+class DirectoryCreateIfNotExists(Descriptor[Path]):
+    def __set__(self, obj, path: Union[str, Path]) -> None:
         if isinstance(path, str):
             path = Path(path)
         if path.exists() and not path.is_dir():
@@ -26,6 +31,6 @@ class DirectoryCreateIfNotExists(Descriptor):
         setattr(obj, self.private_name, path)
 
 
-class OrientedShape(Descriptor):
-    def __set__(self, obj, shape):
+class OrientedShape(Descriptor[BaseGeometry]):
+    def __set__(self, obj, shape: BaseGeometry):
         setattr(obj, self.private_name, reorient(shape, orientation=-1))

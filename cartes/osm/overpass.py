@@ -1,21 +1,30 @@
+from typing import Callable, Optional
+
 import geopandas as gpd
 from shapely.geometry import LineString, MultiPolygon, Point, Polygon
-from shapely.ops import linemerge, polygonize_full
+from shapely.geometry.base import BaseGeometry
+from shapely.ops import polygonize_full
 
 from ..utils.geometry import reorient
+from .requests import JSONType
 
 
 def identity(elt, *args, **kwargs):
     return elt
 
 
-def to_geometry(elt):
+def to_geometry(elt: JSONType) -> BaseGeometry:
     nodes = elt.get("nodes", None)
-    shape_ = LineString if nodes is None or nodes[0] != nodes[-1] else Polygon
-    return reorient(shape_(list((p["lon"], p["lat"]) for p in elt["geometry"])))
+    if nodes is not None:
+        assert isinstance(nodes, list)
+    shape = LineString if nodes is None else Polygon
+    return reorient(shape(list((p["lon"], p["lat"]) for p in elt["geometry"])))
 
 
-def merge_geometries(elt, process_geom=None):
+def merge_geometries(
+    elt: JSONType,
+    process_geom: Optional[Callable[[BaseGeometry], BaseGeometry]] = None,
+) -> BaseGeometry:
     if process_geom is None:
         process_geom = identity
 
@@ -49,7 +58,7 @@ def merge_geometries(elt, process_geom=None):
     )
 
 
-def parse_nodes(res):
+def parse_nodes(result: JSONType) -> gpd.GeoDataFrame:
     return gpd.GeoDataFrame.from_records(
         list(
             dict(
@@ -60,13 +69,16 @@ def parse_nodes(res):
                 geometry=Point(elt["lon"], elt["lat"]),
                 **elt["tags"],
             )
-            for elt in res["elements"]
+            for elt in result["elements"]
             if elt["type"] == "node" and elt.get("tags", None)
         )
     )
 
 
-def parse_ways(riv, process_geom=None):
+def parse_ways(
+    result: JSONType,
+    process_geom: Optional[Callable[[BaseGeometry], BaseGeometry]] = None,
+) -> gpd.GeoDataFrame:
     if process_geom is None:
         process_geom = identity
 
@@ -79,13 +91,16 @@ def parse_ways(riv, process_geom=None):
                 geometry=process_geom(to_geometry(elt)),
                 **elt["tags"],
             )
-            for elt in riv["elements"]
+            for elt in result["elements"]
             if elt["type"] == "way" and elt.get("tags", None)
         )
     )
 
 
-def parse_relations(res, process_geom=None):
+def parse_relations(
+    results: JSONType,
+    process_geom: Optional[Callable[[BaseGeometry], BaseGeometry]] = None,
+):
     if process_geom is None:
         process_geom = identity
 
@@ -100,7 +115,7 @@ def parse_relations(res, process_geom=None):
                 geometry=merge_geometries(elt, process_geom=process_geom),
                 **elt["tags"],
             )
-            for elt in res["elements"]
+            for elt in results["elements"]
             if elt["type"] == "relation" and elt.get("tags", None)
         )
     )

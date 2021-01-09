@@ -4,6 +4,7 @@ import logging
 import time
 from io import BytesIO
 from pathlib import Path
+from typing import Any
 
 import requests
 from appdirs import user_cache_dir
@@ -11,45 +12,46 @@ from tqdm.autonotebook import tqdm
 
 from ..utils.cache import CacheResults
 
+JSONType = Any  # TODO Dict[str, Any]
+GeoJSONType = Any
 session = requests.Session()
 
 
-def hash_request(*args, **kwargs):
+def _hash_request(*args, **kwargs) -> str:
     if "timeout" in kwargs:
         del kwargs["timeout"]
 
-    if "data" in kwargs:
+    if "data" in kwargs:  # overpass requests
         query = kwargs["data"].replace("\n", "").replace(" ", "")
         hashcode = hashlib.md5(query.encode("utf-8")).hexdigest()
-    else:
+    else:  # usual ones
         prepared_url = requests.Request("POST", *args, **kwargs).prepare().url
         assert prepared_url is not None
         hashcode = hashlib.md5(prepared_url.encode("utf-8")).hexdigest()
     return hashcode + ".json"
 
 
-def write_json(json_, cache_file):
+def _write_json(json_: JSONType, cache_file) -> None:
     logging.info(f"Writing cache file {cache_file}")
     cache_file.write_text(json.dumps(json_, indent=2))
 
 
-def read_json(cache_file):
+def _read_json(cache_file: Path) -> JSONType:
     logging.info(f"Reading cache file {cache_file}")
     return json.loads(cache_file.read_text())
 
 
 @CacheResults(
     cache_dir=Path(user_cache_dir("cartes")) / "osm",
-    hashing=hash_request,
-    reader=read_json,
-    writer=write_json,
+    hashing=_hash_request,
+    reader=_read_json,
+    writer=_write_json,
 )
-def json_request(url, timeout=180, **kwargs):
+def json_request(url: str, timeout: int = 180, **kwargs) -> JSONType:
     """
     Send a request to the Overpass API and return the JSON response.
     """
     logging.info(f"Sending POST request to {url} with {kwargs}")
-
     response = session.post(url=url, timeout=timeout, **kwargs)
 
     if response.status_code in [

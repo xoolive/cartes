@@ -134,7 +134,10 @@ class EPSGProjectionMeta(ABCMeta):
                     msg = f"Fallback to regular Projection with {crs.to_dict()}"
                     logging.warning(msg)
                     return Projection.__init__(self, crs.to_dict())
-                globe = Globe(semimajor_axis=a, inverse_flattening=rf,)
+                globe = Globe(
+                    semimajor_axis=a,
+                    inverse_flattening=rf,
+                )
 
             base_class.__init__(
                 self,
@@ -176,7 +179,7 @@ class EPSGProjectionMeta(ABCMeta):
         return super().__new__(metacls, name, (base_class,), attr_dict)
 
 
-def __getattr__(name: str):
+def __getattr__(name: str) -> Projection:
     if name.startswith("EPSG_"):
         return EPSGProjectionMeta(name, (), dict(identifier=f"EPSG:{name[5:]}"))
 

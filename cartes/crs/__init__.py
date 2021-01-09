@@ -107,5 +107,5 @@ RDN2008 = meta.EPSG_6875
 Hartebeesthoek94 = meta.EPSG_9221
 
 
-def __getattr__(name: str):
+def __getattr__(name: str) -> Projection:  # noqa: F405
     return getattr(meta, name)
