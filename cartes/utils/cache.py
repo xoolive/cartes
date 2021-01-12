@@ -1,10 +1,38 @@
 import functools
+import logging
+import sys
 from pathlib import Path
 from typing import Callable, Dict, Generic, Hashable, TypeVar, Union
 
 from .descriptors import DirectoryCreateIfNotExists
 
 T = TypeVar("T")
+
+
+if sys.version_info >= (3, 8):
+    from functools import cached_property
+else:
+
+    _not_found = object()
+
+    class cached_property(object):
+        """Super simple implementation from functools."""
+
+        def __init__(self, func):
+            self.func = func
+            self.__doc__ = getattr(func, "__doc__")
+
+        def __set_name__(self, owner, name):
+            self.attrname = name
+
+        def __get__(self, instance, cls):
+            if instance is None:
+                return self
+            cache = instance.__dict__
+            val = cache.get(self.attrname, _not_found)
+            if val is _not_found:
+                cache[self.attrname] = val = self.func(instance)
+            return val
 
 
 class CacheFunction(Generic[T]):
@@ -47,12 +75,15 @@ class CacheFunction(Generic[T]):
     def __call__(self, *args, **kwargs) -> T:
         hashcode = self.hashing(*args, **kwargs)
         cache_file = self.cache_dir / str(hashcode)
+        logging.info(f"Using cache file: {cache_file}")
         res = self.lru_cache.get(cache_file.as_posix(), None)  # type: ignore
         if res is not None:
             return res
         if cache_file.exists():
             res = self.reader(cache_file)
         else:
+            msg = f"Calling function {self.function} with {args, kwargs}"
+            logging.debug(msg)
             res = self.function(*args, **kwargs)
             self.writer(res, cache_file)
         self.lru_cache[cache_file.as_posix()] = res
