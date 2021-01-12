@@ -50,7 +50,7 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         return sorted(
             key
             for key, value in self.json.items()
-            if key not in ["geometry", "nodes", "members"]
+            if key not in ["geometry", "nodes", "members", "_parent"]
             and (
                 key == "name:en"
                 or not (key.startswith("name:") or "_name" in key)

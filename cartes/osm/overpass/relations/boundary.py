@@ -3,12 +3,13 @@ from collections import UserDict
 from operator import itemgetter
 from typing import Dict, Iterator, Set, Tuple, Union, cast
 
-from shapely.geometry import MultiLineString
+from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import linemerge, unary_union
 
-from .. import Overpass
 from ....utils.cache import cached_property
+from ....utils.geometry import reorient
+from .. import Overpass
 from ..core import Relation
 
 
@@ -42,11 +43,37 @@ class Boundary(Relation):
         )
 
         self._build_geometry_parts()
-        self.shape = linemerge(
-            # TODO par category
-            list((chunk) for chunk in self.known_chunks["outer"])
-        )
-        self.json["geometry"] = self.shape
+        parts = self.known_chunks
+
+        outer = linemerge(parts["outer"])
+        inner = linemerge(parts["inner"])
+
+        if isinstance(outer, MultiLineString):
+            if isinstance(inner, MultiLineString):
+                list_ = [
+                    Polygon(
+                        o,
+                        holes=list(i for i in inner if Polygon(o).contains(i)),
+                    )
+                    for o in outer
+                ]
+                shape = MultiPolygon(list_)
+            else:
+                list_ = [
+                    Polygon(
+                        o,
+                        holes=[inner] if Polygon(o).contains(inner) else None,
+                    )
+                    for o in outer
+                ]
+                shape = MultiPolygon(list_)
+        else:
+            if isinstance(inner, LineString):
+                shape = Polygon(outer, [inner])
+            else:
+                shape = Polygon(outer, inner)
+
+        self.json["geometry"] = self.shape = reorient(shape)
 
     def intersections(self) -> Iterator[Tuple[int, Set[int]]]:
         all_sets: Dict[int, Set[int]] = dict(
@@ -83,3 +110,8 @@ class Boundary(Relation):
             all_ -= intersection
 
         self.include(all_)
+
+
+# Forcing the inheritance for proper registration
+class Land_Area(Boundary):
+    pass

@@ -1,9 +1,9 @@
 from functools import lru_cache
-from typing import Any, Callable, Dict, Iterator, List, Union
+from operator import itemgetter
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import geopandas as gpd
 
-from ...core import GeoObject
 from ...utils.cache import CacheResults, cached_property
 from ..requests import JSONType, json_request
 from .core import NodeWayRelation, to_geometry
@@ -22,15 +22,43 @@ cache_by_id = CacheResults(
 )
 
 
-class Overpass(GeoObject):
+class Overpass:
     endpoint = "http://www.overpass-api.de/api/interpreter"
 
     def __init__(self, json: JSONType):
+        super().__init__()
         self.json = json
+        self._data: Optional[gpd.GeoDataFrame] = None
+
+    def _repr_html_(self):
+        return self.data._repr_html_()
 
     @property
-    def gdf(self) -> gpd.GeoDataFrame:
-        return self.parse()
+    def bounds(self) -> Tuple[float, float, float, float]:
+        return tuple(  # type: ignore
+            eval(key[:3])(
+                (x["bounds"] for x in self.json["elements"]),
+                key=itemgetter(key),
+            )[key]
+            for key in ["minlon", "minlat", "maxlon", "maxlat"]
+        )
+
+    @property
+    def extent(self) -> Tuple[float, float, float, float]:
+        west, south, east, north = self.bounds
+        return west, east, south, north
+
+    @property
+    def data(self) -> gpd.GeoDataFrame:
+        if self._data is None:
+            self._data = self.parse()
+            if "_parent" in self._data.columns:
+                self._data = self._data.drop(columns=["_parent"])
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        self._data = value
 
     @classmethod
     def query(cls, data: str, **kwargs) -> "Overpass":
@@ -38,16 +66,23 @@ class Overpass(GeoObject):
         return Overpass(res)
 
     def __iter__(self) -> Iterator[NodeWayRelation]:
-        for _, line in self.gdf.iterrows():
-            yield NodeWayRelation(dict(line))
+        for _, line in self.data.iterrows():
+            yield NodeWayRelation({"_parent": self, **dict(line)})
+
+    def __getitem__(self, item) -> NodeWayRelation:
+        elt = self.data.query("id_ == @item")
+        if elt.shape[0] == 0:
+            raise AttributeError(f"No {item} id_ in the current data")
+        return NodeWayRelation({"_parent": self, **dict(elt.iloc[0])})
 
     @property
     def __geo_interface__(self):
-        return self.gdf.drop(columns="_parent").__geo_interface__
+        return self.data.__geo_interface__
 
     @cache_by_id
     def make_node(self, elt: Dict[str, Any]) -> Dict[str, Any]:
         return dict(
+            _parent=self,
             id_=elt["id"],
             type_=elt["type"],
             latitude=elt["lat"],
@@ -59,6 +94,7 @@ class Overpass(GeoObject):
     @cache_by_id
     def make_way(self, elt: Dict[str, Any]) -> Dict[str, Any]:
         return dict(
+            _parent=self,
             id_=elt["id"],
             type_=elt["type"],
             nodes=elt["nodes"],
