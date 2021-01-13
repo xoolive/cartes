@@ -13,6 +13,14 @@ from ..requests import GeoJSONType, JSONType
 
 
 def to_geometry(elt: JSONType) -> BaseGeometry:
+    """Builds a shapely geometry based on JSON representations.
+
+    Parses the usual `out geom` format for geometries.
+
+    >>> str(to_geometry({'type': 'node', 'lon': 1.5, 'lat': 43.6}))
+    'POINT (1.5 43.6)'
+
+    """
     if elt["type"] == "node":
         return Point(elt["lon"], elt["lat"])
 
@@ -24,6 +32,17 @@ def to_geometry(elt: JSONType) -> BaseGeometry:
 
 
 class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
+    """Common behaviour of Node, Way and Relation classes.
+
+    This class is de facto an abstract class. Instantiating it will always
+    fallback to a child class registered in `subclasses`, based on the type
+    of the feature (`json["type_"]`).
+
+    - Representation for such objects in implemented with usual mixins.
+    - Default simplification is available as well.
+
+    """
+
     shape = OrientedShape()
     subclasses: Dict[str, Any] = dict()
     instances: Dict[int, "NodeWayRelation"] = dict()
@@ -113,18 +132,32 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
 
 
 class Node(NodeWayRelation):
+    """Node just delegates the shape parsing to shapely."""
+
     def __init__(self, json: GeoJSONType):
         super().__init__(json)
         self.shape = shape(self.json["geometry"])
 
 
 class Way(NodeWayRelation):
+    """Way just delegates the shape parsing to shapely."""
+
     def __init__(self, json: GeoJSONType):
         super().__init__(json)
         self.shape = shape(self.json["geometry"])
 
 
 class Relation(NodeWayRelation):
+    """Common behaviour for all Relation specifications.
+
+    This class is de facto an abstract class. Instantiating it will always
+    fallback to a child class registered in `subclasses`, based on the type
+    of the feature (`json["type"]`).
+
+    - json['type_'] is node, way, or relation
+    - json['type'] is the `type` key in the `tags` subdictionary
+    """
+
     subclasses: Dict[str, Any] = dict()
 
     def __new__(cls, json: GeoJSONType):

@@ -8,6 +8,30 @@ from ..core import Relation
 
 
 class Waterway(Relation):
+    """A class to parse waterway=* relations.
+
+    The purpose of waterway relations is to have an object for each river.
+
+    Reference: https://wiki.openstreetmap.org/wiki/Relation:waterway
+
+    Tags:
+      - type (waterway)
+      - waterway [river, stream, canal, drain, ditch]
+      - name (*)
+      - destination ?
+      - ref ?
+      - ref:sandre ?
+      - ref:fgkz ?
+      - ...
+
+    Relation members:
+      - None or main_stream 1+
+      - side_stream 0+
+      - spring ?
+      - tributary 0+
+
+    """
+
     def __init__(self, json):
 
         super().__init__(json)

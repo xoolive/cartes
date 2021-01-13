@@ -8,9 +8,9 @@ from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import linemerge, transform, unary_union
 
-from .. import Overpass
 from ....utils.cache import cached_property
 from ....utils.geometry import reorient
+from .. import Overpass
 from ..core import Relation
 
 
@@ -28,6 +28,28 @@ class RelationsDict(UserDict):
 
 
 class Boundary(Relation):
+    """A class to parse boundary=* relations.
+
+    boundary=* relations are used for grouping boundaries and marking
+    enclaves/exclaves.
+
+    Reference: https://wiki.openstreetmap.org/wiki/Relation:boundary
+
+    Tags:
+      - type (boundary)
+      - boundary (administrative)
+      - land_area (administrative)
+      - name
+      - admin_level
+
+    Relation members:
+      - outer 1+
+      - inner 0+
+      - admin_center 0-1
+      - label 0-1
+      - subarea 0+
+    """
+
     def __init__(self, json):
 
         super().__init__(json)

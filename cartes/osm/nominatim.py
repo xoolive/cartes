@@ -42,8 +42,17 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     def __geo_interface__(self) -> GeoJSONType:
         return mapping(self.shape)
 
+    @property
+    def simple_json(self) -> JSONType:
+        return {
+            "place_id": self.json.get("place_id", None),
+            "display_name": self.json.get("display_name", None),
+            "lat": round(float(self.json.get("lat", "nan")), 5),
+            "lon": round(float(self.json.get("lon", "nan")), 5),
+        }
+
     def __repr__(self) -> str:
-        return f"{type(self).__name__} {self.json}"
+        return f"{type(self).__name__} {self.simple_json}"
 
     def __getattr__(self, name):
         if name.endswith("_"):  # in case the name is reserved
@@ -77,6 +86,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
 
         The request is based on the name passed in parameter.
         >>> Nominatim.search("Toulouse")
+        Nominatim {'place_id': 256863032, 'display_name': 'Toulouse, ...', 'lat': 43.60446, 'lon': 1.44425}
 
         """
         params = dict(
@@ -105,6 +115,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
 
         The request is based on the latlon coordinates of the element.
         >>> Nominatim.reverse(43.608, 1.442)
+        Nominatim {'place_id': 154834803, 'display_name': 'Musée Saint-Raymond, ...', 'lat': 43.60783, 'lon': 1.44112}
         """
 
         params = dict(
@@ -133,6 +144,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         determines the type of the OSM object (N for node, W for way, R for
         relation)
         >>> Nominatim.lookup("R367073")
+        Nominatim {'place_id': 256948794, 'display_name': 'Capitole ...', 'lat': 43.60445, 'lon': 1.44449}
         """
         params = dict(
             osm_ids=osm_ids,

@@ -9,6 +9,31 @@ from ..core import Relation
 
 
 class MultiPolygon(Relation):
+    """A class to parse multipolygon=* relations.
+
+    Relations of type multipolygon are used to represent complex areas with
+    holes inside or consisting of multiple disjoint areas.
+
+    Reference: https://wiki.openstreetmap.org/wiki/Relation:multipolygon
+
+    Tags:
+      - type (multipolygon)
+      - natural
+      - landuse
+      - building
+      - man_made
+      - amenity
+      - leisure
+      - highway (pedestrian)
+      - waterway
+      - ...
+
+    Relation members:
+      - outer 1+
+      - inner 0+
+
+    """
+
     def __init__(self, json):
 
         super().__init__(json)
