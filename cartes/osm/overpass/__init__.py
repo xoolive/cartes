@@ -3,6 +3,7 @@ from operator import itemgetter
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import geopandas as gpd
+from tqdm.autonotebook import tqdm
 
 from ...utils.cache import CacheResults, cached_property
 from ..requests import JSONType, json_request
@@ -52,18 +53,54 @@ class Overpass:
     def data(self) -> gpd.GeoDataFrame:
         if self._data is None:
             self._data = self.parse()
-            if "_parent" in self._data.columns:
-                self._data = self._data.drop(columns=["_parent"])
+            for col in ["_parent", "members", "nodes"]:
+                if col in self._data.columns:
+                    self._data = self._data.drop(columns=col)
         return self._data
 
     @data.setter
     def data(self, value):
+        # TODO validation
         self._data = value
 
     @classmethod
-    def query(cls, data: str, **kwargs) -> "Overpass":
-        res = json_request(url=Overpass.endpoint, data=data, **kwargs)
+    def request(
+        cls, query: Optional[str] = None, *args, **kwargs
+    ) -> "Overpass":
+        if query is None:
+            query = cls.build_query(*args, **kwargs)
+        res = json_request(url=Overpass.endpoint, data=query, **kwargs)
         return Overpass(res)
+
+    @classmethod
+    def build_query(cls, *args, **kwargs) -> str:
+        return ""
+
+    def query(self, *args, **kwargs) -> "Overpass":
+        new_overpass = Overpass(self.json)
+        new_overpass.data = self.data.query(*args, **kwargs)
+        return new_overpass
+
+    def drop(self, *args, **kwargs) -> "Overpass":
+        new_overpass = Overpass(self.json)
+        new_overpass.data = self.data.drop(*args, **kwargs)
+        return new_overpass
+
+    def sort_values(self, *args, **kwargs) -> "Overpass":
+        new_overpass = Overpass(self.json)
+        new_overpass.data = self.data.drop(*args, **kwargs)
+        return new_overpass
+
+    def simplify(self, resolution: Optional[float] = None) -> "Overpass":
+        if resolution is None:
+            return self
+        new_overpass = Overpass(self.json)
+        return new_overpass.data.assign(
+            geometry=list(
+                nwr.simplify(resolution).shape
+                for nwr in tqdm(self, total=self.data.shape[0])
+            )
+        )
 
     def __iter__(self) -> Iterator[NodeWayRelation]:
         for _, line in self.data.iterrows():
@@ -126,7 +163,8 @@ class Overpass:
                         "geometry": to_geometry(entry),
                     }
                     for entry in elt.get("members", [])
-                    if entry["type"] != "relation"  # TODO
+                    if entry["type"] != "relation"
+                    # TODO subrelations not supported
                 ),
             )
             for elt in self.json["elements"]

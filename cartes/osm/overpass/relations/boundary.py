@@ -3,13 +3,14 @@ from collections import UserDict
 from operator import itemgetter
 from typing import Dict, Iterator, Set, Tuple, Union, cast
 
+from pyproj import Proj, Transformer
 from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon
 from shapely.geometry.base import BaseGeometry
-from shapely.ops import linemerge, unary_union
+from shapely.ops import linemerge, transform, unary_union
 
+from .. import Overpass
 from ....utils.cache import cached_property
 from ....utils.geometry import reorient
-from .. import Overpass
 from ..core import Relation
 
 
@@ -43,7 +44,40 @@ class Boundary(Relation):
         )
 
         self._build_geometry_parts()
-        parts = self.known_chunks
+        self._make_geometry(self.known_chunks)
+
+    def simplify(self, resolution: float) -> "Boundary":
+        bounds = self.parent.bounds
+
+        def simplify_shape(shape_: BaseGeometry) -> BaseGeometry:
+            proj = Proj(
+                proj="aea",  # equivalent projection
+                lat_1=bounds[1],
+                lat_2=bounds[3],
+                lat_0=(bounds[1] + bounds[3]) / 2,
+                lon_0=(bounds[0] + bounds[2]) / 2,
+            )
+
+            forward = Transformer.from_proj(
+                Proj("EPSG:4326"), proj, always_xy=True
+            )
+            backward = Transformer.from_proj(
+                proj, Proj("EPSG:4326"), always_xy=True
+            )
+            return transform(
+                backward.transform,
+                transform(forward.transform, shape_).simplify(resolution),
+            )
+
+        rel_dict = RelationsDict()
+        for role, shapes in self.known_chunks.items():
+            for elt in shapes:
+                rel_dict.include(simplify_shape(elt), role)
+
+        self._make_geometry(rel_dict)
+        return self
+
+    def _make_geometry(self, parts: RelationsDict):
 
         outer = linemerge(parts["outer"])
         inner = linemerge(parts["inner"])

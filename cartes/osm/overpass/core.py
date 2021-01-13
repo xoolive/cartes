@@ -1,7 +1,9 @@
 from typing import Any, Dict
 
+from pyproj import Proj, Transformer
 from shapely.geometry import LineString, Point, Polygon, mapping, shape
 from shapely.geometry.base import BaseGeometry
+from shapely.ops import transform
 
 from ...core import GeoObject
 from ...utils.descriptors import OrientedShape
@@ -24,8 +26,14 @@ def to_geometry(elt: JSONType) -> BaseGeometry:
 class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     shape = OrientedShape()
     subclasses: Dict[str, Any] = dict()
+    instances: Dict[int, "NodeWayRelation"] = dict()
 
     def __new__(cls, json: GeoJSONType):
+        # Singleton instances
+        id_ = json["id_"]
+        if id_ in NodeWayRelation.instances.keys():
+            return NodeWayRelation.instances[id_]
+        # Otherwise dispatch on subclasses
         type_ = NodeWayRelation.subclasses[json["type_"]]
         if cls in NodeWayRelation.subclasses.values():
             return super().__new__(cls)
@@ -82,6 +90,26 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         if value is None:
             raise AttributeError(name)
         return value
+
+    def simplify(self, resolution):
+        bounds = self.parent.bounds
+
+        proj = Proj(
+            proj="aea",  # equivalent projection
+            lat_1=bounds[1],
+            lat_2=bounds[3],
+            lat_0=(bounds[1] + bounds[3]) / 2,
+            lon_0=(bounds[0] + bounds[2]) / 2,
+        )
+
+        forward = Transformer.from_proj(Proj("EPSG:4326"), proj, always_xy=True)
+        backward = Transformer.from_proj(
+            proj, Proj("EPSG:4326"), always_xy=True
+        )
+        return transform(
+            backward.transform,
+            transform(forward.transform, self.shape).simplify(resolution),
+        )
 
 
 class Node(NodeWayRelation):
