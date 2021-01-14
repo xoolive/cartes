@@ -1,6 +1,7 @@
 import io
 import os
 import re
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
@@ -35,6 +36,8 @@ def version(path):
     raise RuntimeError("Unable to find version string.")
 
 
+cache_dir = Path("cartes") / "tests" / "cache"
+
 setup(
     name="cartes",
     version=version("cartes/__init__.py"),
@@ -48,13 +51,16 @@ setup(
     packages=find_packages(),
     package_data={
         "cartes": [
-            "conftest.py",
             "mypy.ini",
             "py.typed",
             "pyproject.toml",
             "readme.md",
             "setup.cfg",
-        ]
+        ],
+        "cartes.tests": list(
+            x.relative_to(cache_dir.parent).as_posix()
+            for x in cache_dir.glob("*.json")
+        ),
     },
     python_requires=">=3.6",
     install_requires=[
