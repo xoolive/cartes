@@ -1,12 +1,4 @@
-import logging
-
 from cartes.osm.overpass import Overpass
-from cartes.osm.requests import json_request
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-json_request.cache_dir = "tests/cache"  # type: ignore
 
 
 def test_basic_query() -> None:

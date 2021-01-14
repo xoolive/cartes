@@ -1,7 +1,6 @@
 import logging
 
 import click
-import matplotlib.pyplot as plt
 
 from cartes import crs
 from cartes.utils.features import countries
@@ -24,6 +23,8 @@ def main(projection: str, scale: str, verbose: int):
         logger.setLevel(logging.INFO)
     elif verbose > 1:
         logger.setLevel(logging.DEBUG)
+
+    import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(
         subplot_kw=dict(projection=getattr(crs, projection)())

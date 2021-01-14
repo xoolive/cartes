@@ -46,7 +46,16 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
-    package_data={"cartes": ["py.typed", "readme.md"]},
+    package_data={
+        "cartes": [
+            "conftest.py",
+            "mypy.ini",
+            "py.typed",
+            "pyproject.toml",
+            "readme.md",
+            "setup.cfg",
+        ]
+    },
     python_requires=">=3.6",
     install_requires=[
         "matplotlib",

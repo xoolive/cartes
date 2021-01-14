@@ -8,8 +8,5 @@ def pytest_configure(config):
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
-    current_dir = Path(__file__).parent
-    while next(current_dir.glob("tests"), None) is None:
-        current_dir = current_dir.parent
-
-    json_request.cache_dir = current_dir / "tests" / "cache"  # type: ignore
+    json_request.cache_dir = Path(config.rootdir) / "cartes" / "tests" / "cache"
+    logging.warning(f"Using cache_dir {json_request.cache_dir} for tests")

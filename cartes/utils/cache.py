@@ -1,4 +1,3 @@
-import functools
 import logging
 import sys
 from pathlib import Path
@@ -115,8 +114,9 @@ class CacheResults(Generic[T]):
         self.writer = writer
         self.reader = reader
 
-    def __call__(self, function: Callable[..., T]) -> Callable[..., T]:
+    def __call__(self, function: Callable[..., T]) -> CacheFunction[T]:
         cache_function = CacheFunction(
             function, self.cache_dir, self.hashing, self.writer, self.reader
         )
-        return functools.wraps(function)(cache_function)
+        cache_function.__doc__ = function.__doc__
+        return cache_function
