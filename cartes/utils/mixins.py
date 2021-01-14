@@ -4,16 +4,29 @@ import pandas as pd
 
 
 class HTMLMixin:
+    """Base class for HTML repr mixins.
+
+    It may look vain, but it terminates the super()._repr_html_() cascade.
+    """
+
     def _repr_html_(self) -> str:
         return ""
 
 
 class HTMLTitleMixin(HTMLMixin):
+    """A Mixin class to have the name of the class in the HTML repr."""
+
     def _repr_html_(self):
         return f"<h2>{type(self).__name__}</h2>" + super()._repr_html_()
 
 
 class HTMLAttrMixin(HTMLMixin):
+    """A Mixin class to build a table of attributes in the HTML repr.
+
+    Classes using this Mixin should override the html_attr_list as an attribute
+    or a property.
+    """
+
     html_attr_list: List[str] = []
 
     def _expand_view(self) -> Iterator[Tuple[str, str]]:

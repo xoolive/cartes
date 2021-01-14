@@ -3,6 +3,8 @@ from cartopy.mpl.geoaxes import GeoAxesSubplot
 from ..core import GeoObject
 from ..osm import Nominatim
 
+# We patch the set_extent method to use GeoObjects instead.
+
 
 def _set_extent(self, shape, buffer: float = 0.01):
     if isinstance(shape, str):

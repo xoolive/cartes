@@ -6,6 +6,7 @@ import geopandas as gpd
 from tqdm.autonotebook import tqdm
 
 from ...utils.cache import CacheResults, cached_property
+from ...utils.descriptors import Descriptor
 from ..requests import JSONType, json_request
 from .core import NodeWayRelation, to_geometry
 
@@ -18,18 +19,47 @@ def hashing_id(*args, **kwargs):
 cache_by_id = CacheResults(
     cache_dir=".",
     hashing=hashing_id,
+    # no storing in files
     writer=lambda _a, _b: None,
     reader=lambda _: dict(unused=True),
 )
 
 
+class OverpassDataDescriptor(Descriptor[gpd.GeoDataFrame]):
+    """Builds the GeoDataFrame on demand.
+    Validates it has required fields when replaced.
+    """
+
+    def __get__(self, obj, cls=None) -> gpd.GeoDataFrame:
+        data = getattr(obj, self.private_name)
+        if data is None:
+            data = obj.parse()
+            for col in ["_parent", "members", "nodes"]:
+                if col in data.columns:
+                    data = data.drop(columns=col)
+            setattr(obj, self.private_name, data)
+        return data
+
+    def __set__(self, obj, data: gpd.GeoDataFrame) -> None:
+        feat = ["id_", "type_", "geometry"]
+        msg = f"Ensure you do not remove the following features: {feat}"
+        if any(f not in data.columns for f in feat):
+            raise TypeError(msg)
+
+        setattr(obj, self.private_name, data)
+
+
 class Overpass:
     endpoint = "http://www.overpass-api.de/api/interpreter"
+    data = OverpassDataDescriptor()
 
-    def __init__(self, json: JSONType):
+    def __init__(self, json: JSONType, data: Optional[gpd.GeoDataFrame] = None):
         super().__init__()
         self.json = json
-        self._data: Optional[gpd.GeoDataFrame] = None
+        if data is None:
+            self._data = None
+        else:
+            self.data = data
 
     def _repr_html_(self):
         return self.data._repr_html_()
@@ -49,20 +79,6 @@ class Overpass:
         west, south, east, north = self.bounds
         return west, east, south, north
 
-    @property
-    def data(self) -> gpd.GeoDataFrame:
-        if self._data is None:
-            self._data = self.parse()
-            for col in ["_parent", "members", "nodes"]:
-                if col in self._data.columns:
-                    self._data = self._data.drop(columns=col)
-        return self._data
-
-    @data.setter
-    def data(self, value):
-        # TODO validation
-        self._data = value
-
     @classmethod
     def request(
         cls, query: Optional[str] = None, *args, **kwargs
@@ -72,24 +88,24 @@ class Overpass:
         res = json_request(url=Overpass.endpoint, data=query, **kwargs)
         return Overpass(res)
 
-    @classmethod
-    def build_query(cls, *args, **kwargs) -> str:
+    @staticmethod
+    def build_query(*args, **kwargs) -> str:
         return ""
 
+    def assign(self, *args, **kwargs) -> "Overpass":
+        return Overpass(self.json, self.data.assign(*args, **kwargs))
+
     def query(self, *args, **kwargs) -> "Overpass":
-        new_overpass = Overpass(self.json)
-        new_overpass.data = self.data.query(*args, **kwargs)
-        return new_overpass
+        return Overpass(self.json, self.data.query(*args, **kwargs))
 
     def drop(self, *args, **kwargs) -> "Overpass":
-        new_overpass = Overpass(self.json)
-        new_overpass.data = self.data.drop(*args, **kwargs)
-        return new_overpass
+        return Overpass(self.json, self.data.drop(*args, **kwargs))
+
+    def dropna(self, *args, **kwargs) -> "Overpass":
+        return Overpass(self.json, self.data.dropna(*args, **kwargs))
 
     def sort_values(self, *args, **kwargs) -> "Overpass":
-        new_overpass = Overpass(self.json)
-        new_overpass.data = self.data.drop(*args, **kwargs)
-        return new_overpass
+        return Overpass(self.json, self.data.sort_values(*args, **kwargs))
 
     def simplify(self, resolution: Optional[float] = None) -> "Overpass":
         if resolution is None:

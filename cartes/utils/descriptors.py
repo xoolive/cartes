@@ -13,7 +13,7 @@ class Descriptor(Generic[T]):
         self.public_name = name
         self.private_name = "_" + name
 
-    def __get__(self, obj, objtype=None) -> T:
+    def __get__(self, obj, cls=None) -> T:
         return getattr(obj, self.private_name)
 
     def __set__(self, obj, value: T) -> None:
@@ -32,5 +32,10 @@ class DirectoryCreateIfNotExists(Descriptor[Path]):
 
 
 class OrientedShape(Descriptor[BaseGeometry]):
+    """Ensures the given shape is properly oriented for Altair.
+
+    Reference: https://altair-viz.github.io/user_guide/data.html?highlight=orient%20transform#winding-order
+    """
+
     def __set__(self, obj, shape: BaseGeometry):
         setattr(obj, self.private_name, reorient(shape, orientation=-1))

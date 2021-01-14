@@ -16,6 +16,13 @@ def reorient(shape: base.BaseGeometry, orientation=-1) -> base.BaseGeometry:
 def simplify(
     shape: base.BaseGeometry, resolution: float, bounds: Dict[str, float]
 ) -> base.BaseGeometry:
+    """Geometric shape simplification.
+
+    Projects a given geometry to an equivalent projection before calling the
+    usual Douglas-Peucker simplification.
+
+    Reference: https://shapely.readthedocs.io/en/stable/manual.html#object.simplify
+    """
     proj = Proj(
         proj="aea",  # equivalent projection
         lat_1=bounds["minlat"],
