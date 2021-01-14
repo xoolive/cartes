@@ -1,5 +1,23 @@
 # type: ignore
 
+"""
+This module provides facilities for producing CRS projections.
+
+All projections defined here are simple aliases of official EPSG definitions.
+Definitions are parsed and dispatched to inherit from the proper Cartopy CRS
+classes. Sometimes, there seems to be errors in the bounding boxes so there
+are adjustments below, overwriting the boundind boxes as class attributes.
+
+>>> Lambert93().proj4_init
+'+ellps=GRS80 +proj=lcc +lon_0=3 +lat_0=46.5 +x_0=700000 ...'
+
+>>> LCCEurope().bbox
+{'south_latitude': 24.6, 'west_longitude': -35.58, ...}
+
+>>> LCCEurope().proj4_params
+{'ellps': 'GRS80', 'proj': 'lcc', ...}
+
+"""
 import warnings
 
 # All projections first come from the regular Cartopy CRS module
@@ -11,10 +29,6 @@ from .info import valid_crs  # noqa: F401
 # Silence a fiona warning
 warnings.simplefilter(action="ignore", category=UserWarning)
 
-# All projections defined here are simple aliases of official EPSG definitions.
-# Definitions are parsed and dispatched to inherit from the proper Cartopy CRS
-# classes. Sometimes, there seems to be errors in the bounding boxes so there
-# are adjustments below, overwriting the boundind boxes as class attributes.
 
 # Official projection in Switzerland
 CH1903p = meta.EPSG_2056

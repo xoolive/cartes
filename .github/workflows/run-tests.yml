@@ -20,8 +20,9 @@ jobs:
           sudo apt install -y libgeos-dev libproj-dev proj-bin proj-data
           python -m pip install --upgrade pip
           python -m pip install --upgrade numpy pyproj  # dependency for cartopy
-          python -m pip install --upgrade pytest
+          python -m pip install --upgrade pytest codecov pytest-cov
           python -m pip install -e .
       - name: Run tests
         run: |
-          pytest
+          pytest --cov --cov-report term-missing --ignore=cartes/__main__.py
+      - uses: codecov/codecov-action@v1

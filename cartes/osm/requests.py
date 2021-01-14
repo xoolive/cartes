@@ -31,7 +31,7 @@ def _hash_request(*args, **kwargs) -> str:
     return hashcode + ".json"
 
 
-def _write_json(json_: JSONType, cache_file) -> None:
+def _write_json(json_: JSONType, cache_file) -> None:  # coverage: ignore
     logging.info(f"Writing cache file {cache_file}")
     cache_file.write_text(json.dumps(json_, indent=2))
 
