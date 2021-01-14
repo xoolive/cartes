@@ -1,6 +1,8 @@
 # Cartes
 
 ![build](https://github.com/xoolive/cartes/workflows/build/badge.svg)
+[![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue.svg)](https://mypy.readthedocs.io/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/psf/black)
 
 Cartes is a Python library providing facilities to produce meaningful maps.
 
