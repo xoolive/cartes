@@ -1,6 +1,7 @@
 import itertools
 from operator import itemgetter
 
+from shapely.geometry.multilinestring import MultiLineString
 from shapely.ops import linemerge, unary_union
 
 from .. import Overpass
@@ -47,10 +48,18 @@ class Waterway(Relation):
                 parsed_keys.values(), key=itemgetter("role")
             )
         )
-
-        elements = [linemerge(parts.get("main_stream", parts.get("")))]
+        main_stream = parts.get("main_stream", parts.get(""))
+        elements = [
+            linemerge(main_stream)
+            if isinstance(main_stream, MultiLineString)
+            else main_stream
+        ]
         side_stream = parts.get("side_stream", None)
         if side_stream is not None:
-            elements.append(linemerge(side_stream))
+            elements.append(
+                linemerge(side_stream)
+                if isinstance(side_stream, MultiLineString)
+                else side_stream
+            )
 
         self.json["geometry"] = self.shape = unary_union(elements)
