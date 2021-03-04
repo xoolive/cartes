@@ -8,6 +8,7 @@ from typing import Any
 
 import requests
 from appdirs import user_cache_dir
+
 from tqdm.autonotebook import tqdm
 
 from ..utils.cache import CacheResults
@@ -52,6 +53,11 @@ def json_request(url: str, timeout: int = 180, **kwargs) -> JSONType:
     Send a request to the Overpass API and return the JSON response.
     """
     logging.info(f"Sending POST request to {url} with {kwargs}")
+
+    kwargs = kwargs.copy()
+    if "data" in kwargs:
+        kwargs["data"] = kwargs["data"].encode("utf-8")
+
     response = session.post(url=url, timeout=timeout, **kwargs)
 
     if response.status_code in [
@@ -65,12 +71,13 @@ def json_request(url: str, timeout: int = 180, **kwargs) -> JSONType:
 
     response.raise_for_status()
 
+    b = BytesIO()
+
     if kwargs.get("stream", None):
         total_size = int(response.headers.get("content-length", 0))
         logging.info(f"{response.headers}")
         block_size = 1024 * 1024
         pbar = tqdm(total=total_size, unit="B", unit_scale=True)
-        b = BytesIO()
         for data in response.iter_content(block_size):
             pbar.update(len(data))
             b.write(data)
