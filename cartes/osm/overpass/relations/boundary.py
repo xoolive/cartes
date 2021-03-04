@@ -1,16 +1,16 @@
 import itertools
 from collections import UserDict
 from operator import itemgetter
-from typing import Dict, Iterator, Set, Tuple, Union, cast
+from typing import Dict, Iterator, Set, Tuple, TypeVar, Union, cast
 
 from pyproj import Proj, Transformer
 from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import linemerge, transform, unary_union
 
+from .. import Overpass
 from ....utils.cache import cached_property
 from ....utils.geometry import reorient
-from .. import Overpass
 from ..core import Relation
 
 
@@ -25,6 +25,9 @@ class RelationsDict(UserDict):
                 self[role].append(c)
         else:
             self[role].append(chunk)
+
+
+T = TypeVar("T", bound="Boundary")
 
 
 class Boundary(Relation):
@@ -68,16 +71,22 @@ class Boundary(Relation):
         self._build_geometry_parts()
         self._make_geometry(self.known_chunks)
 
-    def simplify(self, resolution: float) -> "Boundary":
-        bounds = self.parent.bounds
+    def simplify(
+        self: T,
+        resolution: float,
+        bounds: Union[None, Tuple[float, float, float, float]] = None,
+    ) -> T:
+        if bounds is None:
+            bounds = self.parent.bounds
+        b0, b1, b2, b3 = bounds
 
         def simplify_shape(shape_: BaseGeometry) -> BaseGeometry:
             proj = Proj(
                 proj="aea",  # equivalent projection
-                lat_1=bounds[1],
-                lat_2=bounds[3],
-                lat_0=(bounds[1] + bounds[3]) / 2,
-                lon_0=(bounds[0] + bounds[2]) / 2,
+                lat_1=b1,
+                lat_2=b3,
+                lat_0=(b1 + b3) / 2,
+                lon_0=(b0 + b2) / 2,
             )
 
             forward = Transformer.from_proj(

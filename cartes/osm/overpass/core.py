@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Tuple, TypeVar, Union
 
 from pyproj import Proj, Transformer
 from shapely.geometry import LineString, Point, Polygon, mapping, shape
@@ -29,6 +29,9 @@ def to_geometry(elt: JSONType) -> BaseGeometry:
         assert isinstance(nodes, list)
     shape = LineString if nodes is None or nodes[0] != nodes[-1] else Polygon
     return reorient(shape(list((p["lon"], p["lat"]) for p in elt["geometry"])))
+
+
+T = TypeVar("T", bound="NodeWayRelation")
 
 
 class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
@@ -111,10 +114,10 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         return value
 
     def simplify(
-        self,
-        resolution,
+        self: T,
+        resolution: float,
         bounds: Union[None, Tuple[float, float, float, float]] = None,
-    ):
+    ) -> T:
 
         if bounds is None:
             bounds = self.parent.bounds
@@ -131,7 +134,7 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         backward = Transformer.from_proj(
             proj, Proj("EPSG:4326"), always_xy=True
         )
-        new = NodeWayRelation(self.json)
+        new = type(self)(self.json)
         new.shape = transform(
             backward.transform,
             transform(forward.transform, self.shape).simplify(resolution),
