@@ -134,10 +134,7 @@ class EPSGProjectionMeta(ABCMeta):
                     msg = f"Fallback to regular Projection with {crs.to_dict()}"
                     logging.warning(msg)
                     return Projection.__init__(self, crs.to_dict())
-                globe = Globe(
-                    semimajor_axis=a,
-                    inverse_flattening=rf,
-                )
+                globe = Globe(semimajor_axis=a, inverse_flattening=rf)
 
             base_class.__init__(
                 self,

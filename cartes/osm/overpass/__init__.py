@@ -1,3 +1,4 @@
+import logging
 from functools import lru_cache
 from operator import itemgetter
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
@@ -5,13 +6,15 @@ from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 import geopandas as gpd
 from tqdm.autonotebook import tqdm
 
+from ...crs import PlateCarree  # type: ignore
+from ...dataviz import style
 from ...utils.cache import CacheResults, cached_property
 from ...utils.descriptors import Descriptor
 from ..requests import JSONType, json_request
 from .core import NodeWayRelation, to_geometry
 
 
-def hashing_id(*args, **kwargs):
+def hashing_id(*args: Dict[str, int], **kwargs: Dict[str, int]) -> int:
     elt = args[1] if len(args) > 1 else kwargs["elt"]
     return elt["id"]
 
@@ -68,7 +71,7 @@ class Overpass:
     def bounds(self) -> Tuple[float, float, float, float]:
         return tuple(  # type: ignore
             eval(key[:3])(
-                (x["bounds"] for x in self.json["elements"]),
+                (x["bounds"] for x in self.json["elements"] if "bounds" in x),
                 key=itemgetter(key),
             )[key]
             for key in ["minlon", "minlat", "maxlon", "maxlat"]

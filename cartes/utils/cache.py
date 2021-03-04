@@ -74,11 +74,11 @@ class CacheFunction(Generic[T]):
     def __call__(self, *args, **kwargs) -> T:
         hashcode = self.hashing(*args, **kwargs)
         cache_file = self.cache_dir / str(hashcode)
-        logging.info(f"Using cache file: {cache_file}")
         res = self.lru_cache.get(cache_file.as_posix(), None)  # type: ignore
         if res is not None:
             return res
         if cache_file.exists():
+            logging.info(f"Using cache file: {cache_file}")
             res = self.reader(cache_file)
         else:
             msg = f"Calling function {self.function} with {args, kwargs}"

@@ -119,10 +119,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         """
 
         params = dict(
-            lat=latitude,
-            lon=longitude,
-            format="jsonv2",
-            polygon_geojson=True,
+            lat=latitude, lon=longitude, format="jsonv2", polygon_geojson=True,
         )
         json = json_request(
             cls.endpoint.rstrip("/") + "/" + "reverse",
@@ -146,11 +143,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         >>> Nominatim.lookup("R367073")
         Nominatim {'place_id': 256948794, 'display_name': 'Capitole ...', 'lat': 43.60445, 'lon': 1.44449}
         """
-        params = dict(
-            osm_ids=osm_ids,
-            format="jsonv2",
-            polygon_geojson=True,
-        )
+        params = dict(osm_ids=osm_ids, format="jsonv2", polygon_geojson=True,)
         json = json_request(
             cls.endpoint.rstrip("/") + "/" + "lookup",
             timeout=30,
