@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Tuple, Union
 
 from pyproj import Proj, Transformer
 from shapely.geometry import LineString, Point, Polygon, mapping, shape
@@ -110,8 +110,14 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
             raise AttributeError(name)
         return value
 
-    def simplify(self, resolution):
-        bounds = self.parent.bounds
+    def simplify(
+        self,
+        resolution,
+        bounds: Union[None, Tuple[float, float, float, float]] = None,
+    ):
+
+        if bounds is None:
+            bounds = self.parent.bounds
 
         proj = Proj(
             proj="aea",  # equivalent projection
@@ -125,10 +131,12 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         backward = Transformer.from_proj(
             proj, Proj("EPSG:4326"), always_xy=True
         )
-        return transform(
+        new = NodeWayRelation(self.json)
+        new.shape = transform(
             backward.transform,
             transform(forward.transform, self.shape).simplify(resolution),
         )
+        return new
 
 
 class Node(NodeWayRelation):

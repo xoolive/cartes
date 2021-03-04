@@ -107,13 +107,15 @@ class Overpass:
     def sort_values(self, *args, **kwargs) -> "Overpass":
         return Overpass(self.json, self.data.sort_values(*args, **kwargs))
 
-    def simplify(self, resolution: Optional[float] = None) -> "Overpass":
+    def simplify(
+        self, resolution: Optional[float] = None, **kwargs
+    ) -> "Overpass":
         if resolution is None:
             return self
         new_overpass = Overpass(self.json)
         return new_overpass.data.assign(
             geometry=list(
-                nwr.simplify(resolution).shape
+                nwr.simplify(resolution, **kwargs).shape  # TODO multiprocess
                 for nwr in tqdm(self, total=self.data.shape[0])
             )
         )
