@@ -19,3 +19,18 @@ def test_multipolygon():
         out geom;""",
     )
     assert airport.data.shape[0] == 5297
+
+
+def test_simplify():
+    tls = Overpass.request(
+        query="""[out:json][timeout:180];
+area[name='Toulouse'][admin_level=8];
+rel(area)["boundary"="postal_code"];
+out geom;
+ """,
+    ).assign(
+        longitude=lambda df: df.geometry.centroid.x,
+        latitude=lambda df: df.geometry.centroid.y,
+    )
+    # Useless test, just check it works
+    assert tls.simplify(1e3).data.shape[0] == 6

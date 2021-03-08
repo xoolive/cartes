@@ -1,17 +1,20 @@
 import logging
+from concurrent.futures import Future, ProcessPoolExecutor, as_completed
 from functools import lru_cache
 from operator import itemgetter
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import geopandas as gpd
+from shapely.geometry.base import BaseGeometry
 from tqdm.autonotebook import tqdm
 
 from ...crs import PlateCarree  # type: ignore
-from ...dataviz import style
+from ...dataviz import matplotlib_style
 from ...utils.cache import CacheResults, cached_property
 from ...utils.descriptors import Descriptor
 from ..requests import JSONType, json_request
 from .core import NodeWayRelation, to_geometry
+from .query import generate_query  # noqa: F401
 
 
 def hashing_id(*args: Dict[str, int], **kwargs: Dict[str, int]) -> int:
@@ -45,7 +48,7 @@ class OverpassDataDescriptor(Descriptor[gpd.GeoDataFrame]):
 
     def __set__(self, obj, data: gpd.GeoDataFrame) -> None:
         feat = ["id_", "type_", "geometry"]
-        msg = f"Ensure you do not remove the following features: {feat}"
+        msg = f"Did you remove any of {feat} from {data.columns}?"
         if any(f not in data.columns for f in feat):
             raise TypeError(msg)
 
@@ -59,6 +62,7 @@ class Overpass:
     def __init__(self, json: JSONType, data: Optional[gpd.GeoDataFrame] = None):
         super().__init__()
         self.json = json
+        self._bounds: Optional[Tuple[float, float, float, float]] = None
         if data is None:
             self._data = None
         else:
@@ -67,15 +71,45 @@ class Overpass:
     def _repr_html_(self):
         return self.data._repr_html_()
 
+    def __getstate__(self):
+        """
+        In order for the multiprocessing step to be efficient, we choose here
+        to empty the JSON and avoid numerous useless pickling.
+
+        Currently used only in .simplify()
+        """
+        # Compute it once, because we need it for the simplification process
+        if getattr(self, "simplify_flag", None):
+            _ = self.bounds, self.data
+        # Copy the object's state from self.__dict__ which contains
+        # all our instance attributes. Always use the dict.copy()
+        # method to avoid modifying the original state.
+        state = self.__dict__.copy()
+        # Usually, we do not need the json of the parent for the simplification
+        if getattr(self, "simplify_flag", None):
+            state["json"] = dict(
+                (key, value)
+                for key, value in self.json.items()
+                if key != "elements"
+            )
+        return state
+
+    def __setstate__(self, state):
+        # Restore instance attributes
+        self.__dict__.update(state)
+
     @property
     def bounds(self) -> Tuple[float, float, float, float]:
-        return tuple(  # type: ignore
+        if self._bounds is not None:
+            return self._bounds
+        self._bounds = tuple(  # type: ignore
             eval(key[:3])(
                 (x["bounds"] for x in self.json["elements"] if "bounds" in x),
                 key=itemgetter(key),
             )[key]
             for key in ["minlon", "minlat", "maxlon", "maxlat"]
         )
+        return self._bounds  # type: ignore
 
     @property
     def extent(self) -> Tuple[float, float, float, float]:
@@ -111,17 +145,41 @@ class Overpass:
         return Overpass(self.json, self.data.sort_values(*args, **kwargs))
 
     def simplify(
-        self, resolution: Optional[float] = None, **kwargs
+        self,
+        resolution: Optional[float] = None,
+        max_workers: Optional[int] = 4,
+        **kwargs,
     ) -> "Overpass":
+
         if resolution is None:
             return self
+
         new_overpass = Overpass(self.json)
-        return new_overpass.data.assign(
-            geometry=list(
-                nwr.simplify(resolution, **kwargs).shape  # TODO multiprocess
-                for nwr in tqdm(self, total=self.data.shape[0])
+
+        if max_workers is not None and max_workers > 1:
+            self.simplify_flag = True
+            with ProcessPoolExecutor(max_workers=max_workers) as executor:
+                futures: Dict[Future, int] = dict()
+                for i, nwr in enumerate(self):
+                    futures[
+                        executor.submit(nwr.simplify, resolution, **kwargs)
+                    ] = i
+                result: List[Tuple[int, BaseGeometry]] = list()
+                for future in tqdm(as_completed(futures), total=len(futures)):
+                    result.append((futures[future], future.result().shape))
+            self.simplify_flag = False
+        else:
+            result = list(
+                (i, nwr.simplify(resolution, **kwargs))
+                for i, nwr in tqdm(enumerate(self), total=self.data.shape[0])
             )
+
+        new_overpass.data = self.data.assign(
+            geometry=list(elt for _, elt in sorted(result))
         )
+        new_overpass.json = self.json
+
+        return new_overpass
 
     def __iter__(self) -> Iterator[NodeWayRelation]:
         for _, line in self.data.iterrows():
@@ -207,3 +265,37 @@ class Overpass:
                 if elt.get("tags", None)
             )
         )
+
+    def plot(self, ax, by: Optional[str] = None, **kwargs):
+        if by is None:
+            return self.data.plot(ax=ax, transform=PlateCarree())
+        for key, elt in self.data.groupby(by):
+            if (
+                by not in matplotlib_style
+                and key not in matplotlib_style
+                and by not in kwargs
+                and key not in kwargs
+            ):
+                logging.warning(f"{by}={key} not in stylesheet, hence ignored")
+                continue
+            current_style = {
+                **matplotlib_style.get(by, {}),
+                **matplotlib_style.get(key, {}),
+                **kwargs.get(by, {}),
+                **kwargs.get(key, {}),
+            }
+            if "key" in current_style:
+                if current_style["key"] not in elt.columns:
+                    continue
+                for cat, piece in elt.groupby(current_style["key"]):
+                    if cat in matplotlib_style[key]:
+                        piece.plot(
+                            ax=ax,
+                            transform=PlateCarree(),
+                            **current_style.get(cat, {}),
+                        )
+                    else:
+                        msg = f"{key}={cat} not in stylesheet, hence ignored"
+                        logging.warning(msg)
+            else:
+                elt.plot(ax=ax, transform=PlateCarree(), **current_style)

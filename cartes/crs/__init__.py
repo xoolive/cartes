@@ -18,13 +18,23 @@ are adjustments below, overwriting the boundind boxes as class attributes.
 {'ellps': 'GRS80', 'proj': 'lcc', ...}
 
 """
+
+# fmt: off
 import warnings
 
 # All projections first come from the regular Cartopy CRS module
-from cartopy.crs import *  # noqa: F401, F403
+from cartopy.crs import (  # noqa: F401, F403
+    UTM, AlbersEqualArea, AzimuthalEquidistant, EqualEarth,
+    EquidistantConic, Globe, Gnomonic, InterruptedGoodeHomolosine,
+    LambertAzimuthalEqualArea, LambertConformal, LambertCylindrical,
+    Mercator, Miller, Mollweide, Orthographic, PlateCarree, Projection,
+    Robinson, RotatedPole, Sinusoidal, Stereographic, TransverseMercator
+)
 
 from . import meta
 from .info import valid_crs  # noqa: F401
+
+# fmt: on
 
 # Silence a fiona warning
 warnings.simplefilter(action="ignore", category=UserWarning)

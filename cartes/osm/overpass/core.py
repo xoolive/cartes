@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple, TypeVar, Union
+from typing import Any, Dict, Optional, Tuple, TypeVar, Union
 
 from pyproj import Proj, Transformer
 from shapely.geometry import LineString, Point, Polygon, mapping, shape
@@ -50,7 +50,11 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     subclasses: Dict[str, Any] = dict()
     instances: Dict[int, "NodeWayRelation"] = dict()
 
-    def __new__(cls, json: GeoJSONType):
+    def __new__(cls, json: Optional[GeoJSONType] = None):
+
+        if json is None:
+            return super().__new__(cls)
+
         # Singleton instances
         id_ = json["id_"]
         if id_ in NodeWayRelation.instances.keys():
@@ -102,8 +106,13 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         )
 
     def __getattr__(self, name):
+
+        if name in ["__getstate__", "__setstate__"]:  # security for pickling
+            raise AttributeError(name)
+
         if name.endswith("_"):  # in case the name is reserved
             name = name[:-1]
+
         value = self.json.get(name, None)
         if value is None:
             address = self.json.get("address", None)
@@ -171,7 +180,9 @@ class Relation(NodeWayRelation):
 
     subclasses: Dict[str, Any] = dict()
 
-    def __new__(cls, json: GeoJSONType):
+    def __new__(cls, json: Optional[GeoJSONType] = None):
+        if json is None:
+            return super().__new__(cls, json)
         type_ = Relation.subclasses[json["type"]]
         if cls in Relation.subclasses.values():
             return super().__new__(cls, json)
