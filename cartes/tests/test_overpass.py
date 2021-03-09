@@ -1,11 +1,17 @@
 import pytest
 
-from cartes.osm.overpass import Overpass, generate_query
+from cartes.osm.overpass import Overpass
 
 
 def test_basic_query() -> None:
     query_lfbo = "[out:json];area[icao=LFBO];nwr(area)[aeroway];out geom;"
     lfbo = Overpass.request(query=query_lfbo)
+    runways = sorted(set(lfbo.data.query('aeroway=="runway"').ref))
+    assert runways == ["14H/32H", "14L/32R", "14R/32L"]
+
+
+def test_proper_query() -> None:
+    lfbo = Overpass.request(area=dict(icao="LFBO"), aeroway=True)
     runways = sorted(set(lfbo.data.query('aeroway=="runway"').ref))
     assert runways == ["14H/32H", "14L/32R", "14R/32L"]
 
@@ -26,14 +32,14 @@ def test_validator() -> None:
 
 def test_generate_query() -> None:
     assert (
-        generate_query(area=dict(icao="LFBO"), aeroway=True)
+        Overpass.build_query(area=dict(icao="LFBO"), aeroway=True)
         == "[out:json][timeout:180];"
         "area[icao=LFBO];nwr(area)[aeroway];out geom;"
     )
 
     south, west, north, east = 33, -30, 70, 35
     assert (
-        generate_query(
+        Overpass.build_query(
             bounds=[west, south, east, north], node=dict(capital="yes")
         )
         == "[out:json][timeout:180][bbox:33,-30,70,35];"
@@ -49,7 +55,7 @@ def test_generate_query() -> None:
         "out geom;"
     )
     assert (
-        generate_query(
+        Overpass.build_query(
             area=dict(
                 boundary="protected_area",
                 name=dict(regex="Mercantour"),
@@ -70,7 +76,7 @@ def test_generate_query() -> None:
     )
 
     assert (
-        generate_query(
+        Overpass.build_query(
             area=dict(name="Toulouse", admin_level=8),
             rel=dict(boundary="postal_code"),
         )
@@ -85,7 +91,9 @@ def test_generate_query() -> None:
     )
 
     assert (
-        generate_query(area=dict(name="Cannes", admin_level=8), building=True)
+        Overpass.build_query(
+            area=dict(name="Cannes", admin_level=8), building=True
+        )
         == cannes
     )
 
@@ -100,7 +108,7 @@ def test_generate_query() -> None:
     )
 
     assert (
-        generate_query(
+        Overpass.build_query(
             rel=[
                 dict(waterway="canal", name=dict(regex="Neste")),
                 dict(around=1000, waterway="river"),

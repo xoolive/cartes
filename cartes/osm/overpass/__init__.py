@@ -5,6 +5,8 @@ from operator import itemgetter
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import geopandas as gpd
+import pandas as pd
+from pyproj import Proj
 from shapely.geometry.base import BaseGeometry
 from tqdm.autonotebook import tqdm
 
@@ -14,7 +16,7 @@ from ...utils.cache import CacheResults, cached_property
 from ...utils.descriptors import Descriptor
 from ..requests import JSONType, json_request
 from .core import NodeWayRelation, to_geometry
-from .query import generate_query  # noqa: F401
+from .query import Query
 
 
 def hashing_id(*args: Dict[str, int], **kwargs: Dict[str, int]) -> int:
@@ -44,7 +46,19 @@ class OverpassDataDescriptor(Descriptor[gpd.GeoDataFrame]):
                 if col in data.columns:
                     data = data.drop(columns=col)
             setattr(obj, self.private_name, data)
-        return data
+        if "latitude" in data.columns:
+            x = data.query("latitude != latitude")
+        else:
+            x = data.assign(latitude=None, longitude=None)
+
+        if x.shape[0] > 0:
+            x = x.query("geometry == geometry and not geometry.is_empty")
+            data.loc[x.index, ["latitude", "longitude"]] = x.assign(
+                longitude=lambda df: df.geometry.centroid.x,
+                latitude=lambda df: df.geometry.centroid.y,
+            )[["latitude", "longitude"]]
+
+        return data.dropna(axis=1, how="all")
 
     def __set__(self, obj, data: gpd.GeoDataFrame) -> None:
         feat = ["id_", "type_", "geometry"]
@@ -122,12 +136,13 @@ class Overpass:
     ) -> "Overpass":
         if query is None:
             query = cls.build_query(*args, **kwargs)
-        res = json_request(url=Overpass.endpoint, data=query, **kwargs)
+        res = json_request(url=Overpass.endpoint, data=query)
         return Overpass(res)
 
     @staticmethod
-    def build_query(*args, **kwargs) -> str:
-        return ""
+    def build_query(*, out: str = "json", timeout: int = 180, **kwargs) -> str:
+        query = Query(out=out, timeout=timeout, **kwargs)
+        return query.generate()
 
     def assign(self, *args, **kwargs) -> "Overpass":
         return Overpass(self.json, self.data.assign(*args, **kwargs))
@@ -138,11 +153,54 @@ class Overpass:
     def drop(self, *args, **kwargs) -> "Overpass":
         return Overpass(self.json, self.data.drop(*args, **kwargs))
 
+    def merge(self, *args, **kwargs) -> "Overpass":
+        return Overpass(self.json, self.data.merge(*args, **kwargs))
+
     def dropna(self, *args, **kwargs) -> "Overpass":
         return Overpass(self.json, self.data.dropna(*args, **kwargs))
 
     def sort_values(self, *args, **kwargs) -> "Overpass":
         return Overpass(self.json, self.data.sort_values(*args, **kwargs))
+
+    def area(self) -> "Overpass":
+        bounds = self.bounds
+        proj = Proj(
+            proj="aea",  # equivalent projection
+            lat_1=bounds[1],
+            lat_2=bounds[3],
+            lat_0=(bounds[1] + bounds[3]) / 2,
+            lon_0=(bounds[0] + bounds[2]) / 2,
+        )
+        return self.assign(
+            area=self.data.geometry.set_crs(epsg=4326).to_crs(crs=proj.crs).area
+        )
+
+    def length(self) -> "Overpass":
+        bounds = self.bounds
+        proj = Proj(
+            proj="aea",  # equivalent projection
+            lat_1=bounds[1],
+            lat_2=bounds[3],
+            lat_0=(bounds[1] + bounds[3]) / 2,
+            lon_0=(bounds[0] + bounds[2]) / 2,
+        )
+        return self.assign(
+            length=self.data.geometry.set_crs(epsg=4326)
+            .to_crs(crs=proj.crs)
+            .length
+        )
+
+    def coloring(self) -> "Overpass":
+        import networkx as nx
+
+        g = nx.Graph()
+        for elt in self:
+            for neighbour in elt.neighbours:
+                g.add_edge(elt.json["id_"], neighbour)
+        colors = nx.algorithms.coloring.greedy_color(g)
+        return self.merge(
+            pd.Series(colors, name="coloring"), left_on="id_", right_index=True
+        )
 
     def simplify(
         self,

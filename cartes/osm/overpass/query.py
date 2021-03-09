@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from numbers import Real
 from typing import Any, Dict, List, Mapping, Optional, Union
 
+from .. import Nominatim
+
 QueryType = Union[bool, int, str, List, Mapping[str, Any]]
 
 
@@ -54,9 +56,17 @@ def expand(key: str, value: Union[bool, str, Dict[str, str]]):
 
 
 class Area(Generator):
+    def transform(self, value):
+        if isinstance(value, str):
+            value = Nominatim.search(value)
+        return value
+
     def validate(self, value):
-        if not isinstance(value, dict):
-            raise TypeError("The area parameter must be a dictionary")
+        if isinstance(value, Nominatim):
+            return
+        if not (isinstance(value, dict)):
+            msg = "The area parameter must be a dictionary or a Nominatim"
+            raise TypeError(msg)
         for elt in value.values():
             if not any(isinstance(elt, t) for t in [Real, str, dict]):
                 raise TypeError(
@@ -66,14 +76,22 @@ class Area(Generator):
 
     def generate(self, elt, obj) -> str:
         res = ";"
-        if "as_" in elt:
-            res = f"->.{elt['as_']};"
-            del elt["as_"]
-        return (
-            "area"
-            + "".join(expand(key, value) for key, value in elt.items())
-            + res
-        )
+        if isinstance(elt, dict):
+            if "as_" in elt:
+                res = f"->.{elt['as_']};"
+                del elt["as_"]
+            return (
+                "area"
+                + "".join(expand(key, value) for key, value in elt.items())
+                + res
+            )
+        elif isinstance(elt, Nominatim):
+            type_ = elt.json["osm_type"]
+            if type_ == "relation":
+                type_ = "rel"
+            return f"{type_}(id:{elt.json['osm_id']});map_to_area" + res
+        msg = "The area parameter must be a dictionary or a Nominatim"
+        raise TypeError(msg)
 
 
 class Bounds(Generator):
@@ -191,10 +209,3 @@ class Query:
         res += f"{self.area}"
         res += f"{self.nwr}"
         return res
-
-
-def generate_query(
-    *, out: str = "json", timeout: int = 180, **kwargs: QueryType
-) -> str:
-    query = Query(out=out, timeout=timeout, **kwargs)
-    return query.generate()
