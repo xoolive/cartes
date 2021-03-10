@@ -5,3 +5,4 @@ Example gallery
    :maxdepth: 1
 
    gallery/capitals
+   gallery/footprint
