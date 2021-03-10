@@ -71,7 +71,7 @@ Data visualisation
         parallels=[35, 65],
         scale=400,
     ).configure_title(
-        font="Fontin Sans", fontSize=16, anchor="start"
+        font="Fira Sans", fontSize=16, anchor="start"
     ).properties(
         width=500, height=400
     )
