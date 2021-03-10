@@ -1,3 +1,23 @@
+@font-face {
+  font-family: "Fontin Sans";
+  src: url("_static/fonts/Fontin_Sans_R_45b.woff2") format("woff2"),
+    url("_static/fonts/Fontin_Sans_R_45b.woff") format("woff"),
+    url("_static/fonts/Fontin_Sans_R_45b.otf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Fontin Sans";
+  src: url("_static/fonts/Fontin_Sans_B_45b.woff2") format("woff2"),
+    url("_static/fonts/Fontin_Sans_B_45b.woff") format("woff"),
+    url("_static/fonts/Fontin_Sans_B_45b.otf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: bold;
+}
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
