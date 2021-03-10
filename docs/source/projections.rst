@@ -79,4 +79,3 @@ Some definitions in the library set very narrow bounds which are then incompatib
 
 .. raw:: html
     :file: _static/crs_custom.html
-    
