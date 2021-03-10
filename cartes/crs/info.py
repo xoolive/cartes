@@ -1,12 +1,20 @@
+from typing import Union
+
 import pandas as pd
 import pyproj
 from shapely.geometry import shape
 
 from ..core import GeoObject
+from ..osm import Nominatim
 
 
-def valid_crs(area: GeoObject):
+def valid_crs(area: Union[str, GeoObject]) -> pd.DataFrame:
     """Returns a list of valid CRS according to a GeoObject."""
+    if isinstance(area, str):
+        candidate = Nominatim.search(area)
+        if candidate is None:
+            raise ValueError("No such place found.")
+        area = candidate
     msg = "The argument must implement the __geo_interface__ protocol"
     if not isinstance(area, GeoObject):
         raise TypeError(msg)
