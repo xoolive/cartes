@@ -34,7 +34,7 @@ Data visualisation
     from matplotlib.offsetbox import AnchoredText
 
     fig, ax = plt.subplots(
-        figsize=(10, 10),
+        figsize=(50, 50),
         subplot_kw=dict(projection=Lambert93())
     )
 
@@ -43,6 +43,6 @@ Data visualisation
 
     text = AnchoredText(
         "Antibes, France", loc=3, frameon=False,
-        prop={"size": 24, "fontname": "Ubuntu"},
+        prop={"size": 84, "fontname": "Ubuntu"},
     )
     ax.add_artist(text)
