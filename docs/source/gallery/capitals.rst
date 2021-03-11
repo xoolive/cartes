@@ -64,14 +64,14 @@ Data visualisation
         base.mark_text(font="Ubuntu", fontSize=12, dy=10, align="center")
         .encode(alt.Latitude("latitude:Q"), alt.Longitude("longitude:Q"))
         .transform_filter("datum.population > 300000"),
-    ).properties(title="European (major) Capitals").project(
+    ).properties(
+        width=500, height=400, title="European (major) Capitals"
+    ).configure_title(
+        font="Fira Sans", fontSize=16, anchor="start"
+    ).project(
         # The projection (coming soon as crs)
         "conicConformal",
         rotate=[-15, -52, 0],
         parallels=[35, 65],
         scale=400,
-    ).configure_title(
-        font="Fira Sans", fontSize=16, anchor="start"
-    ).properties(
-        width=500, height=400
     )
