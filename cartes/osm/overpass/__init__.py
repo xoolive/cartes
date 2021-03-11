@@ -8,6 +8,7 @@ import geopandas as gpd
 import pandas as pd
 from pyproj import Proj
 from shapely.geometry.base import BaseGeometry
+from shapely.ops import unary_union
 from tqdm.autonotebook import tqdm
 
 from ...crs import PlateCarree  # type: ignore
@@ -116,6 +117,13 @@ class Overpass:
     def bounds(self) -> Tuple[float, float, float, float]:
         if self._bounds is not None:
             return self._bounds
+        if "geometry" in self.data.columns:
+            x = self.data.query(
+                "geometry == geometry and not geometry.is_empty"
+            )
+            if x.shape[0] > 0:
+                self._bounds = unary_union(self.data.geometry).bounds
+                return self._bounds
         self._bounds = tuple(  # type: ignore
             eval(key[:3])(
                 (x["bounds"] for x in self.json["elements"] if "bounds" in x),

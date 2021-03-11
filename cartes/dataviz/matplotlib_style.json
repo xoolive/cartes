@@ -11,7 +11,7 @@
   "control_tower": {
     "linewidth": 2,
     "color": "0.3",
-    "edgecolor": "0.6",
+    "edgecolor": "0.3",
     "zorder": 0,
     "markersize": 1000,
     "marker": "atc_tower"
@@ -19,7 +19,7 @@
   "tower": {
     "linewidth": 2,
     "color": "0.3",
-    "edgecolor": "0.6",
+    "edgecolor": "0.3",
     "zorder": 0,
     "markersize": 1000,
     "marker": "atc_tower"

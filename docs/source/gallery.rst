@@ -6,3 +6,5 @@ Example gallery
 
    gallery/capitals
    gallery/footprint
+   gallery/airports
+   gallery/terminal
