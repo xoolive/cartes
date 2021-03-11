@@ -74,11 +74,11 @@ def setup(app):
 
     # Specific stylesheet
     app.add_css_file(
-        "https://fonts.googleapis.com/css?family=Fira Sans"
+        "https://fonts.googleapis.com/css?family=Fira Sans|Ubuntu"
         ":regular,bold&subset=Latin&display=swap"
     )
     app.add_css_file(
-        "https://fonts.googleapis.com/css?family=Ubuntu"
-        ":regular,bold&subset=Latin&display=swap"
+        "https://fonts.googleapis.com/css?family=Noto Sans JP"
+        ":thin,regular,bold&display=swap"
     )
     app.add_css_file("main_stylesheet.css")

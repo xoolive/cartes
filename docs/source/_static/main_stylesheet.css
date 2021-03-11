@@ -190,6 +190,11 @@ div#fontin {
   font-family: "Fontin Sans" !important;
   font-size: 0;
 }
+div#notojp {
+  font-family: "Noto Sans JP" !important;
+  font-weight: 100;
+  font-size: 0;
+}
 
 .vega-embed {
   text {

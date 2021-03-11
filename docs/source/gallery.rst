@@ -1,6 +1,9 @@
 Example gallery
 ===============
 
+Basic examples
+--------------
+
 .. toctree::
    :maxdepth: 1
 
@@ -8,3 +11,11 @@ Example gallery
    gallery/footprint
    gallery/airports
    gallery/terminal
+
+Advanced examples
+-----------------
+
+.. toctree::
+   :maxdepth: 1
+
+   gallery/tokyo_metro
