@@ -181,3 +181,9 @@ div.bottomnav {
 .gallery .image-title {
   font-size: 0.95em;
 }
+
+.vega-embed {
+  text {
+    font-family: "Lato", "proxima-nova", "Helvetica Neue", Arial, sans-serif;
+  }
+}
