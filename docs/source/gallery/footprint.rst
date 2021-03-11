@@ -43,6 +43,6 @@ Data visualisation
 
     text = AnchoredText(
         "Antibes, France", loc=3, frameon=False,
-        prop={"size": 84, "fontname": "Ubuntu"},
+        prop={"size": 84, "fontname": "Fontin Sans"},
     )
     ax.add_artist(text)
