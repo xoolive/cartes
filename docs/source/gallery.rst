@@ -18,4 +18,5 @@ Advanced examples
 .. toctree::
    :maxdepth: 1
 
+   gallery/bayern
    gallery/tokyo_metro
