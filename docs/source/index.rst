@@ -21,6 +21,5 @@ The cartes library is a powerful asset to publish clean, lightweight geographica
    installation
    projections
    osm
-   visualisation
    gallery
 

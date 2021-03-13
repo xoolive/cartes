@@ -5,6 +5,11 @@ This example is obviously inspired by the example of London Tube Lines in the `A
 
 It can feel a bit frustrating when discovering those libraries not to be able to extend it easily to other cities. We pick Tokyo here, and spice it up with a bilingual map (mostly in Japanese, but English appears with the mouse.)
 
+.. warning::
+
+    - It may happen that the visualisation is rendered before the fonts are downloaded. In case such thing happens, a simple refresh (F5) should be enough to fix things.
+    - A close up map is built in the `corresponding section <#zoom-in-to-downtown-tokyo>`_.
+
 .. raw:: html
 
     <div id="tokyo_global"></div>
@@ -16,10 +21,6 @@ It can feel a bit frustrating when discovering those libraries not to be able to
       .catch(console.warn);
     </script>
 
-
-.. warning::
-
-    A more detailed map is built in the `corresponding section <#zoom-in-to-downtown-tokyo>`_.
 
 Data acquisition
 ----------------

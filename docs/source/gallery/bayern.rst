@@ -3,6 +3,10 @@ License plate codes in Bavaria
 
 License plates on cars in Germany start with a one, two or three letter codes  corresponding (roughly) to small administrative circonscriptions. The keyword for Wikipedia is `Kfz-Kennzeichen <https://de.wikipedia.org/wiki/Liste_der_Kfz-Kennzeichen_in_Deutschland>`_.
 
+.. warning::
+
+    A more comprehensive map with coats of arms is constructed in the `corresponding section <#coats-of-arms>`_.
+
 .. raw:: html
 
     <div id="bayern"></div>
@@ -14,10 +18,6 @@ License plates on cars in Germany start with a one, two or three letter codes  c
       .catch(console.warn);
     </script>
 
-
-.. warning::
-
-    A more comprehensive map with coats of arms is constructed in the `corresponding section <#coats-of-arms>`_.
 
 Data acquisition
 ----------------
@@ -86,7 +86,7 @@ Coats of arms
 
 The first map shows one main issue: only `Landkreis` display a license plate code, not cities outside a `Kreis` (`Kreisfreie Stadt`).
 
-Since the data returned by OpenStreetMap contains a Wikidata identifier, we use it to fill the missing information. Since the process involves many small downloads which can be run in parallel, we use in the following example the asynchronous library ``aiohttp`` rather than the popular blocking ``requests`` library.
+Since the data returned by OpenStreetMap contains a Wikidata identifier, we use it to fill the missing information. Since the whole process involves many small downloads which can be run in parallel, we use in the following example the asynchronous library ``aiohttp`` rather than the popular "blocking" ``requests`` library.
 
 Wikidata returns comprehensive information in JSON format, with popular fields encoded with identifiers. We focus here on:
 
@@ -141,10 +141,10 @@ The following code gets all the necessary complementary information:
             return list(result for result in await asyncio.gather(*futures))
     
     
-    records = await main()  # only valid in notebooks, otherwise asyncio.run(main())
+    records = await wikidata()  # only valid in notebooks, otherwise asyncio.run(main())
 
     bayern_complete = bayern.data.merge(
-        pd.DataFrame.from_records(await main(), index=bayern.data.id_),
+        pd.DataFrame.from_records(records, index=bayern.data.id_),
         left_on="id_",
         right_index=True,
     )
