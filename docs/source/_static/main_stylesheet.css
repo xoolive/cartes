@@ -201,3 +201,7 @@ div#notojp {
     font-family: "Lato", "proxima-nova", "Helvetica Neue", Arial, sans-serif;
   }
 }
+
+.wy-side-nav-search {
+  background-color: #8c1515;
+}
