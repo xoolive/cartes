@@ -244,14 +244,15 @@ The Cartes library provies a different ``.simplify()`` method on ``Overpass`` st
 
 .. code:: python
 
-    alt.hconcat(
+    alt.concat(
         *list(
             alt.Chart(toulouse.simplify(resolution=value))
             .mark_geoshape()
             .encode(color="postal_code:N")
             .properties(width=200, height=200, title=f"simplify({value:.0f})")
             for value in [1e2, 5e2, 1e3]
-        )
+        ),
+        columns=2
     )
 
 .. raw:: html
