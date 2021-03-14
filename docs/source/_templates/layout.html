@@ -1,10 +1,4 @@
-{% extends "!layout.html" %} {%- block linktags %} {{ super() }}
-<!-- Import Vega & Vega-Lite (does not have to be from CDN) -->
-<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
-<!-- Import vega-embed -->
-<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-{% endblock %} {% block extrabody %}
+{% extends "!layout.html" %} {% block extrabody %}
 <!-- force the fonts to be put in cache in advance -->
 <div id="ubuntu">Ubuntu <b>bold</b></div>
 <div id="fontin">Fontin Sans <b>bold</b></div>

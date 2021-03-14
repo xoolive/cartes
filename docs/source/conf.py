@@ -59,9 +59,9 @@ html_static_path = ["_static"]
 
 def setup(app):
     # <!-- Import Vega & Vega-Lite -->
-    # app.add_js_file("https://cdn.jsdelivr.net/npm/vega@5")
-    # app.add_js_file("https://cdn.jsdelivr.net/npm/vega-embed@6")
-    # app.add_js_file("https://cdn.jsdelivr.net/npm/vega-lite@5")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/vega@5")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/vega-lite@5")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/vega-embed@6")
 
     # <!-- Necessary to include jupyter widgets -->
     app.add_js_file(

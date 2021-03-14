@@ -2,7 +2,7 @@ Building footprints in a given city
 ===================================
 
 .. image:: ../_static/gallery/antibes.png
-   :scale: 80%
+   :scale: 25%
    :alt: Antibes building footprint
    :align: center
 
