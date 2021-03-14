@@ -8,7 +8,6 @@ from typing import Any
 
 import requests
 from appdirs import user_cache_dir
-
 from tqdm.autonotebook import tqdm
 
 from ..utils.cache import CacheResults
@@ -60,14 +59,16 @@ def json_request(url: str, timeout: int = 180, **kwargs) -> JSONType:
 
     response = session.post(url=url, timeout=timeout, **kwargs)
 
-    if response.status_code in [
-        429,  # too many requests
-        504,  # gateway timeout
-    ]:
+    if response.status_code == 504:  # gateway timeout
         msg = f"Got status code {response.status_code}. Trying again soon..."
         logging.warning(msg)
         time.sleep(5)
         return json_request(url, timeout=timeout, **kwargs)
+
+    if response.status_code == 429:  # too many requests
+        status = session.get("https://overpass-api.de/api/status")
+        status.raise_for_status()
+        print(status.content.decode())
 
     response.raise_for_status()
 

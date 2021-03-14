@@ -25,7 +25,7 @@ import warnings
 # All projections first come from the regular Cartopy CRS module
 from cartopy.crs import (  # noqa: F401, F403
     UTM, AlbersEqualArea, AzimuthalEquidistant, EqualEarth,
-    EquidistantConic, Globe, Gnomonic, InterruptedGoodeHomolosine,
+    EquidistantConic, EuroPP, Globe, Gnomonic, InterruptedGoodeHomolosine,
     LambertAzimuthalEqualArea, LambertConformal, LambertCylindrical,
     Mercator, Miller, Mollweide, Orthographic, PlateCarree, Projection,
     Robinson, RotatedPole, Sinusoidal, Stereographic, TransverseMercator
