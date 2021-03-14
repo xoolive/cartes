@@ -195,15 +195,136 @@ It is possible to specify the ``as_`` argument in order to name (and reuse) the 
 Post-processing
 ---------------
 
+Geometry simplification
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``simplify()`` method associated to GeoPandas dataframes comes from Shapely. Its major default comes from the fact that two neighbouring geometries may be simplified differently on the borders they share.
+
+.. code:: python
+
+    from cartes.osm import Overpass
+
+    toulouse = Overpass.request(
+        area={"name": "Toulouse", "admin_level": 8},
+        rel={"boundary": "postal_code"}
+    )
+    
+    base = alt.Chart(
+        toulouse.assign(
+            geometry=toulouse.data.set_crs(epsg=4326)
+            # Switch to Lambert93 to simplify (resolution 500m)
+            .to_crs(epsg=2154).simplify(5e2)
+            # Switch back to WGS84 (lat/lon)
+            .to_crs(epsg=4326),
+        )
+    )
+
+    alt.layer(
+        base.mark_geoshape().encode(alt.Color("postal_code:N")),
+        base.mark_text(
+            color="black", font="Ubuntu", fontSize=14
+        ).encode(
+            alt.Latitude("latitude:Q"),
+            alt.Longitude("longitude:Q"),
+            alt.Text("postal_code:N"),
+        )
+
+.. raw:: html
+
+    <div id="simplify_naive"></div>
+
+    <script type="text/javascript">
+      var spec = "../_static/simplify_naive.json";
+      vegaEmbed('#simplify_naive', spec)
+      .then(result => console.log(result))
+      .catch(console.warn);
+    </script>
+
+The Cartes library provies a different ``.simplify()`` method on ``Overpass`` structures:
+
+.. code:: python
+
+    alt.hconcat(
+        *list(
+            alt.Chart(toulouse.simplify(resolution=value))
+            .mark_geoshape()
+            .encode(color="postal_code:N")
+            .properties(width=200, height=200, title=f"simplify({value:.0f})")
+            for value in [1e2, 5e2, 1e3]
+        )
+    )
+
+.. raw:: html
+
+    <div id="simplify_cartes"></div>
+
+    <script type="text/javascript">
+      var spec = "../_static/simplify_cartes.json";
+      vegaEmbed('#simplify_cartes', spec)
+      .then(result => console.log(result))
+      .catch(console.warn);
+    </script>
+
+Graph colouring
+~~~~~~~~~~~~~~~
+
 .. hint::
 
     TODO
 
-- simplify()  # toulouse code_postal
+- coloring() # 48 states? 
 
-- coloring()  # redirect Bayern
+Distances and areas
+~~~~~~~~~~~~~~~~~~~
 
-- area()   # sorted -> parks?
+The methods ``.area()`` and ``.length()`` compute the area (resp. the length) of each geometry in square meters (resp. meters). They can be useful to select, sort or visualise geometries based on this criterion.
 
-- length()  # rivières
+In the following example, we sort Helsinki public parks by size:
 
+.. code:: python
+
+    parks.area().sort_values("area", ascending=False)
+
+.. raw:: html
+    :file: ./_static/helsinki_parks_area.html
+
+With the ``.length()`` method, we can imagine the following use case to filter rivers by their length:
+
+.. code:: python
+
+    riviera = Overpass.request(
+        area={"name": "Alpes-Maritimes", "as_": "a"},
+        rel=[
+            dict(area="a"),  # the administrative region
+            dict(waterway="river", area="a")  # the rivers
+        ],
+    ).simplify(5e2)
+
+    alt.layer(
+        # The administrative region
+        alt.Chart(riviera.query('boundary=="administrative"'))
+        .mark_geoshape(fill="lightgray"),
+        # The rivers
+        alt.Chart(
+            riviera.query('waterway=="river"').length()
+            # at least 20k long, and remove one going to a different drainage basin
+            .query("length > 20_000 and id_ != 7203495")
+        )
+        .mark_geoshape(filled=False)
+        .encode(alt.Tooltip("name:N")),
+    ).properties(
+        width=400, height=400, title="Main rivers of French Riviera"
+    ).configure_title(
+        font="Fira Sans", fontSize=16, anchor="start"
+    )
+
+.. raw:: html
+
+    <div id="riviera"></div>
+
+    <script type="text/javascript">
+      var spec = "../_static/riviera.json";
+      vegaEmbed('#riviera', spec)
+      .then(result => console.log(result))
+      .catch(console.warn);
+    </script>

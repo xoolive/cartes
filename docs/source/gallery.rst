@@ -11,6 +11,7 @@ Basic examples
    gallery/footprint
    gallery/airports
    gallery/terminal
+   gallery/mercantour
 
 Advanced examples
 -----------------
