@@ -352,7 +352,7 @@ The following map of administrative states of Austria and colours it with both m
             ),
             base.mark_point(filled=True, size=100).encode(
                 alt.Latitude("latitude:Q"), alt.Longitude("longitude:Q"),
-                alt.Color("coloring:N"),
+                alt.Color("coloring:N", scale=alt.Scale(scheme="set2"),
             ),
             labels.mark_text(fontSize=13, font="Ubuntu", dy=-10),
         ),

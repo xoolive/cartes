@@ -51,7 +51,11 @@
           "data": { "name": "data-ec1eefc79af9c1b7f0ffa05d66172976" },
           "mark": { "type": "point", "filled": true, "size": 100 },
           "encoding": {
-            "color": { "type": "nominal", "field": "coloring" },
+            "color": {
+              "type": "nominal",
+              "field": "coloring",
+              "scale": { "scheme": "set2" }
+            },
             "latitude": { "field": "latitude", "type": "quantitative" },
             "longitude": { "field": "longitude", "type": "quantitative" }
           }
