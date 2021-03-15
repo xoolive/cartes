@@ -4,16 +4,12 @@ Data visualisation
 Matplotlib
 ----------
 
-.. hint::
-
-    TODO
+(coming soon, see gallery in the meantime)
 
 Altair
 ------
 
-.. hint::
-
-    TODO
+(coming soon, see gallery in the meantime)
 
 ipyleaflet
 ----------

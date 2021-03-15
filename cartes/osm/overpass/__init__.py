@@ -201,14 +201,16 @@ class Overpass:
     def coloring(self) -> "Overpass":
         import networkx as nx
 
-        g = nx.Graph()
+        self.graph = nx.Graph()
         for elt in self:
             for neighbour in elt.neighbours:
-                g.add_edge(elt.json["id_"], neighbour)
-        colors = nx.algorithms.coloring.greedy_color(g)
-        return self.merge(
+                self.graph.add_edge(elt.json["id_"], neighbour)
+        colors = nx.algorithms.coloring.greedy_color(self.graph)
+        merge = self.merge(
             pd.Series(colors, name="coloring"), left_on="id_", right_index=True
         )
+        merge.graph = self.graph
+        return merge
 
     def simplify(
         self,
@@ -251,6 +253,7 @@ class Overpass:
         for _, line in self.data.iterrows():
             yield NodeWayRelation({"_parent": self, **dict(line)})
 
+    @lru_cache()
     def __getitem__(self, item) -> NodeWayRelation:
         elt = self.data.query("id_ == @item")
         if elt.shape[0] == 0:

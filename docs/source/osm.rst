@@ -269,11 +269,72 @@ The Cartes library provies a different ``.simplify()`` method on ``Overpass`` st
 Graph colouring
 ~~~~~~~~~~~~~~~
 
-.. hint::
+The four-colour theorem states that you can color a map with no more than 4 colors. If you only base yourself on the name of the regions you will map, you will use many colors, at the risk of looping and use the same (or similar) colors for two neighbouring regions.
 
-    TODO
+The ``Overpass`` object offers as ``.coloring()`` method which builds a NetworkX graph and computes a greedy colouring algorithm on it.
 
-- coloring() # 48 states? 
+The following map of administrative states of Austria and colours it with both methods. The resulting graph is also accessible via the ``graph`` attribute.
+
+
+.. raw:: html
+
+    <div id="austria"></div>
+
+    <script type="text/javascript">
+      var spec = "../_static/austria.json";
+      vegaEmbed('#austria', spec)
+      .then(result => console.log(result))
+      .catch(console.warn);
+    </script>
+
+.. code:: python
+
+    from cartes.osm import Overpass
+    import altair as alt
+
+    austria = Overpass.request(
+        area=dict(name="Österreich"), rel=dict(admin_level=4)
+    ).simplify(5e2).coloring()
+
+    base = alt.Chart(austria)
+
+    labels = base.encode(
+        alt.Longitude("longitude:Q"), alt.Latitude("latitude:Q"),
+        alt.Text("name:N"),
+    )
+    edges = pd.DataFrame.from_records(
+        list(
+            {
+                "lat1": austria[e1].latitude, "lon1": austria[e1].longitude,
+                "lat2": austria[e2].latitude, "lon2": austria[e2].longitude,
+            }
+            for e1, e2 in austria.graph.edges
+        )
+    )
+
+    alt.vconcat(
+        base.mark_geoshape().encode(alt.Color("name:N", scale=alt.Scale(scheme="set2"))),
+        alt.hconcat(
+            alt.layer(
+                base.mark_geoshape().encode(
+                    alt.Color("coloring:N", scale=alt.Scale(scheme="set2"))
+                ),
+                labels.mark_text(fontSize=13, font="Ubuntu"),
+            ),
+            alt.layer(
+                alt.Chart(edges).mark_line()
+                .encode(
+                    alt.Latitude("lat1"), alt.Longitude("lon1"),
+                    alt.Latitude2("lat2"), alt.Longitude2("lon2"),
+                ),
+                base.mark_point(filled=True, size=100).encode(
+                    alt.Latitude("latitude:Q"), alt.Longitude("longitude:Q"),
+                    alt.Color("coloring:N"),
+                ),
+                labels.mark_text(fontSize=13, font="Ubuntu", dy=-10),
+            ),
+        ),
+    ).resolve_scale(color="independent")
 
 Distances and areas
 ~~~~~~~~~~~~~~~~~~~
