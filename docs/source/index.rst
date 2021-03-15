@@ -3,6 +3,16 @@ Cartes
 
 Source code on `github <https://github.com/xoolive/cartes>`_.
 
+.. raw:: html
+
+   <div id="home-gallery">
+      <a href="/gallery/mercantour.html"><img width="20%" src="/_static/homepage/mercantour.png"></a>
+      <a href="/gallery/footprint.html"><img width="20%" src="/_static/homepage/antibes.png"></a>
+      <a href="/gallery/airports.html"><img width="20%" src="/_static/homepage/airports.png"></a>
+      <a href="/gallery/tokyo_metro.html#zoom-in-to-downtown-tokyo"><img width="20%" src="/_static/homepage/tokyo.png"></a>
+   </div>
+
+
 Cartes is a Python library providing **facilities to produce meaningful maps**.
 
 Cartes builds on top of most common Python visualisation libraries (Matplotlib/Cartopy, Altair, ipyleaflet) and data manipulation libraries (Pandas, Geopandas) and provides mostly:
