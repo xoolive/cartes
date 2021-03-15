@@ -138,8 +138,8 @@ Note that unlike with the first (complicated) query above, the name ``"Helsinki"
     # [out:json][timeout:180];area[name=Helsinki];nwr(area)[leisure=park];out geom;
 
 
-Making your own queries
-~~~~~~~~~~~~~~~~~~~~~~~
+Writing your own queries
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
 
@@ -176,15 +176,40 @@ It is possible to specify the ``as_`` argument in order to name (and reuse) the 
 
     area = {"name": "Helsinki", "as_": "a"}
 
-- the ``node``, ``way``, ``rel`` (relation) and ``nwr`` (node-way-relation) keywords:
+- the ``node``, ``way``, ``rel`` (relation) and ``nwr`` (node-way-relation) keywords. The accept a dictionary specifying the request or a list of dictionaries:
 
-    .. hint::
+    - the keys in the dictionary refer to the tag to be matched, the values to the value to be set to the tag. If you want to match all values, set it to ``True``:
 
-        TODO
+        .. code:: python
+
+            nwr = dict(leisure="park")
+
+    - if the ``node`` (or ``way``, or ...) must be within a named area, specify the ``area`` keyword;
+  
+        .. code:: python
+
+            area = {"name": "Helsinki", "as_": "a"},
+            nwr = dict(leisure="park", area="a")
+
+    - if the match is not exact, but refers to a regular expression, you may nest a dictionary with the ``regex`` key:
+
+        .. code:: python
+
+            # name must end with park or Park
+            nwr = dict(leisure="park", name=dict(regex="[Pp]ark$"))
+            # name must be empty
+            nwr = dict(leisure="park", name=dict(regex="^$"))
+
+    - use a list if you want several elements:
+
+        .. code:: python
+
+            # get both parks and railway stations
+            nwr = [dict(leisure="park", area="a"), dict(railway="station", area="a")]
 
 - any other keyword arguments are collected and passed as a dictionary to the ``nwr`` keyword:
 
-  .. code:: python
+.. code:: python
 
     # All those notations are equivalent:
     Overpass.request("Helsinki", leisure="park")
