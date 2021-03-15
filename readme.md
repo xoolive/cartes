@@ -1,6 +1,5 @@
 # Cartes
 
-
 ![build](https://github.com/xoolive/cartes/workflows/build/badge.svg)
 ![docs](https://github.com/xoolive/cartes/actions/workflows/github-pages.yml/badge.svg)
 [![Code Coverage](https://img.shields.io/codecov/c/github/xoolive/cartes.svg)](https://codecov.io/gh/xoolive/cartes)
@@ -18,18 +17,24 @@ Cartes builds on top of most common Python visualisation libraries (Matplotlib/C
 
 The cartes library is a powerful asset to **publish clean, lightweight geographical datasets**; and to **produce decent geographical visualisations** in few lines of code.
 
-## Example
+## Gallery
+
+More in the [documentation](https://cartes-viz.github.io/gallery.html)
 
 ## Installation
 
 Latest release:
 
-_(coming soon)_
+```sh
+pip install cartes
+```
 
 Development version:
 
 ```sh
-pip install git+https://github.com/xoolive/cartes
+git clone https://github.com/xoolive/cartes
+cd cartes
+pip install .
 ```
 
 ## Documentation

@@ -13,66 +13,62 @@
       }
     },
     {
-      "hconcat": [
+      "layer": [
         {
-          "layer": [
-            {
-              "mark": "geoshape",
-              "encoding": {
-                "color": {
-                  "type": "nominal",
-                  "field": "coloring",
-                  "scale": { "scheme": "set2" }
-                }
-              }
-            },
-            {
-              "mark": { "type": "text", "font": "Ubuntu", "fontSize": 13 },
-              "encoding": {
-                "latitude": { "field": "latitude", "type": "quantitative" },
-                "longitude": { "field": "longitude", "type": "quantitative" },
-                "text": { "type": "nominal", "field": "name" }
-              }
+          "mark": "geoshape",
+          "encoding": {
+            "color": {
+              "type": "nominal",
+              "field": "coloring",
+              "scale": { "scheme": "set2" }
             }
-          ],
-          "data": { "name": "data-ec1eefc79af9c1b7f0ffa05d66172976" }
+          }
         },
         {
-          "layer": [
-            {
-              "data": { "name": "data-afa73948d6deefdd42854aa58598dee8" },
-              "mark": "line",
-              "encoding": {
-                "latitude": { "field": "lat1", "type": "quantitative" },
-                "latitude2": { "field": "lat2" },
-                "longitude": { "field": "lon1", "type": "quantitative" },
-                "longitude2": { "field": "lon2" }
-              }
-            },
-            {
-              "data": { "name": "data-ec1eefc79af9c1b7f0ffa05d66172976" },
-              "mark": { "type": "point", "filled": true, "size": 100 },
-              "encoding": {
-                "color": { "type": "nominal", "field": "coloring" },
-                "latitude": { "field": "latitude", "type": "quantitative" },
-                "longitude": { "field": "longitude", "type": "quantitative" }
-              }
-            },
-            {
-              "data": { "name": "data-ec1eefc79af9c1b7f0ffa05d66172976" },
-              "mark": {
-                "type": "text",
-                "dy": -10,
-                "font": "Ubuntu",
-                "fontSize": 13
-              },
-              "encoding": {
-                "latitude": { "field": "latitude", "type": "quantitative" },
-                "longitude": { "field": "longitude", "type": "quantitative" },
-                "text": { "type": "nominal", "field": "name" }
-              }
-            }
-          ]
+          "mark": { "type": "text", "font": "Ubuntu", "fontSize": 13 },
+          "encoding": {
+            "latitude": { "field": "latitude", "type": "quantitative" },
+            "longitude": { "field": "longitude", "type": "quantitative" },
+            "text": { "type": "nominal", "field": "name" }
+          }
+        }
+      ],
+      "data": { "name": "data-ec1eefc79af9c1b7f0ffa05d66172976" }
+    },
+    {
+      "layer": [
+        {
+          "data": { "name": "data-afa73948d6deefdd42854aa58598dee8" },
+          "mark": "line",
+          "encoding": {
+            "latitude": { "field": "lat1", "type": "quantitative" },
+            "latitude2": { "field": "lat2" },
+            "longitude": { "field": "lon1", "type": "quantitative" },
+            "longitude2": { "field": "lon2" }
+          }
+        },
+        {
+          "data": { "name": "data-ec1eefc79af9c1b7f0ffa05d66172976" },
+          "mark": { "type": "point", "filled": true, "size": 100 },
+          "encoding": {
+            "color": { "type": "nominal", "field": "coloring" },
+            "latitude": { "field": "latitude", "type": "quantitative" },
+            "longitude": { "field": "longitude", "type": "quantitative" }
+          }
+        },
+        {
+          "data": { "name": "data-ec1eefc79af9c1b7f0ffa05d66172976" },
+          "mark": {
+            "type": "text",
+            "dy": -10,
+            "font": "Ubuntu",
+            "fontSize": 13
+          },
+          "encoding": {
+            "latitude": { "field": "latitude", "type": "quantitative" },
+            "longitude": { "field": "longitude", "type": "quantitative" },
+            "text": { "type": "nominal", "field": "name" }
+          }
         }
       ]
     }

@@ -324,8 +324,7 @@ The following map of administrative states of Austria and colours it with both m
     base = alt.Chart(austria)
 
     labels = base.encode(
-        alt.Longitude("longitude:Q"), alt.Latitude("latitude:Q"),
-        alt.Text("name:N"),
+        alt.Longitude("longitude:Q"), alt.Latitude("latitude:Q"), alt.Text("name:N"),
     )
     edges = pd.DataFrame.from_records(
         list(
@@ -339,25 +338,23 @@ The following map of administrative states of Austria and colours it with both m
 
     alt.vconcat(
         base.mark_geoshape().encode(alt.Color("name:N", scale=alt.Scale(scheme="set2"))),
-        alt.hconcat(
-            alt.layer(
-                base.mark_geoshape().encode(
-                    alt.Color("coloring:N", scale=alt.Scale(scheme="set2"))
-                ),
-                labels.mark_text(fontSize=13, font="Ubuntu"),
+        alt.layer(
+            base.mark_geoshape().encode(
+                alt.Color("coloring:N", scale=alt.Scale(scheme="set2"))
             ),
-            alt.layer(
-                alt.Chart(edges).mark_line()
-                .encode(
-                    alt.Latitude("lat1"), alt.Longitude("lon1"),
-                    alt.Latitude2("lat2"), alt.Longitude2("lon2"),
-                ),
-                base.mark_point(filled=True, size=100).encode(
-                    alt.Latitude("latitude:Q"), alt.Longitude("longitude:Q"),
-                    alt.Color("coloring:N"),
-                ),
-                labels.mark_text(fontSize=13, font="Ubuntu", dy=-10),
+            labels.mark_text(fontSize=13, font="Ubuntu"),
+        ),
+        alt.layer(
+            alt.Chart(edges).mark_line()
+            .encode(
+                alt.Latitude("lat1"), alt.Longitude("lon1"),
+                alt.Latitude2("lat2"), alt.Longitude2("lon2"),
             ),
+            base.mark_point(filled=True, size=100).encode(
+                alt.Latitude("latitude:Q"), alt.Longitude("longitude:Q"),
+                alt.Color("coloring:N"),
+            ),
+            labels.mark_text(fontSize=13, font="Ubuntu", dy=-10),
         ),
     ).resolve_scale(color="independent")
 
