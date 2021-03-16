@@ -5,6 +5,11 @@
 [![Code Coverage](https://img.shields.io/codecov/c/github/xoolive/cartes.svg)](https://codecov.io/gh/xoolive/cartes)
 [![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue.svg)](https://mypy.readthedocs.io/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/psf/black)
+![License](https://img.shields.io/pypi/l/cartes.svg)\
+![PyPI version](https://img.shields.io/pypi/v/cartes)
+[![PyPI downloads](https://img.shields.io/pypi/dm/cartes)](https://pypi.org/project/cartes)
+![Conda version](https://img.shields.io/conda/vn/conda-forge/cartes)
+[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/cartes.svg)](https://anaconda.org/conda-forge/cartes)
 
 Cartes is a Python library providing facilities to produce meaningful maps.
 
@@ -30,6 +35,12 @@ More in the [documentation](https://cartes-viz.github.io/gallery.html)
 
 Latest release:
 
+Recommended, with conda:
+```sh 
+conda install -c conda-forge cartes
+```
+
+or with pip:
 ```sh
 pip install cartes
 ```
