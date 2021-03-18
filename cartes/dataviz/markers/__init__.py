@@ -9,8 +9,9 @@ __all__ = list(p.stem for p in current_dir.glob("*.json"))
 
 
 def __getattr__(name: str) -> path.Path:
-    if (p := current_dir / (name + ".json")).exists():
-        data = json.loads(p.read_text())
+    file_path = current_dir / (name + ".json")
+    if file_path.exists():
+        data = json.loads(file_path.read_text())
         return path.Path(
             vertices=data["vertices"], codes=np.array(data["codes"], np.uint8)
         )

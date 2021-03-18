@@ -68,7 +68,8 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
 
     @property
     def address(self) -> str:
-        if address := self.json.get("address", None):
+        address = self.json.get("address", None)
+        if address:
             return address
         return self.json["display_name"].split(", ")
 
