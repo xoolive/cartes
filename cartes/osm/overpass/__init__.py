@@ -122,8 +122,10 @@ class Overpass:
         if self._bounds is not None:
             return self._bounds
         if "geometry" in self.data.columns:
-            x = self.data.query(
-                "geometry == geometry and not geometry.is_empty"
+            x = (
+                self.data.query("geometry == geometry")
+                .assign(empty=lambda df: df.geometry.is_empty)
+                .query("not empty")
             )
             if x.shape[0] > 0:
                 self._bounds = unary_union(self.data.geometry).bounds
