@@ -134,8 +134,11 @@ class NodeWayRel(Generator):
         for res, elt in elt.items():
             break
         # Particular situation of pivot relations
-        if res == "rel" and list(elt.keys()) == ["area"]:
-            res += f"(pivot.{elt['area']});out geom;"
+        if list(elt.keys()) == ["area"]:
+            if elt["area"] is True:
+                res += "(pivot);out geom;"
+            else:
+                res += f"(pivot.{elt['area']});out geom;"
             return res
         if getattr(obj, "_area", None) is not None:
             area_name = elt.get("area", None)
