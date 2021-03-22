@@ -183,6 +183,14 @@ class Relation(NodeWayRelation):
     def __new__(cls, json: Optional[GeoJSONType] = None):
         if json is None:
             return super().__new__(cls, json)
+        if json["type"] not in Relation.subclasses:
+            msg = (
+                f"The parser for {json['type'].title()} is not implemented yet."
+                f"\nIf you feel enthusiastic, you may implement a class "
+                f"{json['type'].title()} which inherits from Relation"
+                "\nand knows how to parse this relation."
+            )
+            raise NotImplementedError(msg)
         type_ = Relation.subclasses[json["type"]]
         if cls in Relation.subclasses.values():
             return super().__new__(cls, json)

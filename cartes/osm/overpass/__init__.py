@@ -15,6 +15,7 @@ from ...crs import PlateCarree  # type: ignore
 from ...dataviz import matplotlib_style
 from ...utils.cache import CacheResults, cached_property
 from ...utils.descriptors import Descriptor
+from ...utils.geometry import reorient
 from ..requests import JSONType, json_request
 from .core import NodeWayRelation, to_geometry
 from .query import Query
@@ -59,7 +60,10 @@ class OverpassDataDescriptor(Descriptor[gpd.GeoDataFrame]):
                 latitude=lambda df: df.geometry.centroid.y,
             )[["latitude", "longitude"]]
 
-        return data.dropna(axis=1, how="all")
+        return data.dropna(axis=1, how="all").assign(
+            # TODO This should not be necessary, yet...
+            geometry=lambda df: df.geometry.apply(reorient)
+        )
 
     def __set__(self, obj, data: gpd.GeoDataFrame) -> None:
         feat = ["id_", "type_", "geometry"]
