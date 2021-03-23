@@ -60,10 +60,13 @@ class OverpassDataDescriptor(Descriptor[gpd.GeoDataFrame]):
                 latitude=lambda df: df.geometry.centroid.y,
             )[["latitude", "longitude"]]
 
-        return data.dropna(axis=1, how="all").assign(
-            # TODO This should not be necessary, yet...
-            geometry=lambda df: df.geometry.apply(reorient)
-        )
+        if "geometry" in data.columns:
+            data = data.assign(
+                # TODO This should not be necessary, yet...
+                geometry=lambda df: df.geometry.apply(reorient)
+            )
+
+        return data.dropna(axis=1, how="all")
 
     def __set__(self, obj, data: gpd.GeoDataFrame) -> None:
         feat = ["id_", "type_", "geometry"]
