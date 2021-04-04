@@ -11,6 +11,7 @@ on:
 
 jobs:
   deploy:
+    environment: pypi-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
