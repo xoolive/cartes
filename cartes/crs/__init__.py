@@ -12,7 +12,7 @@ are adjustments below, overwriting the boundind boxes as class attributes.
 '+ellps=GRS80 +proj=lcc +lon_0=3 +lat_0=46.5 +x_0=700000 ...'
 
 >>> LCCEurope().bbox
-{'south_latitude': 24.6, 'west_longitude': -35.58, ...}
+{'south_latitude': 24.6...}
 
 >>> LCCEurope().proj4_params
 {'ellps': 'GRS80', 'proj': 'lcc', ...}
