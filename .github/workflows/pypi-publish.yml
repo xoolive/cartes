@@ -1,17 +1,13 @@
 # This workflows will upload a Python Package using Twine when a release is created
-
-# Maybe one day we will package tar.gz without setup.py
-# python -m pip wheel . -w dist --no-deps
-
-name: PyPI Publish
+name: publish
 
 on:
   release:
-    types: [created]
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   deploy:
-    environment: pypi-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,11 +18,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install setuptools wheel twine
-      - name: Build and publish
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+          pip install setuptools wheel
+      - name: Build packages
         run: |
           python setup.py sdist bdist_wheel
-          twine upload dist/*.tar.gz dist/*.whl
+      - name: Publish a Python distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}
