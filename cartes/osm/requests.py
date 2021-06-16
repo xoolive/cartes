@@ -53,11 +53,11 @@ def json_request(url: str, timeout: int = 180, **kwargs) -> JSONType:
     """
     logging.info(f"Sending POST request to {url} with {kwargs}")
 
-    kwargs = kwargs.copy()
-    if "data" in kwargs:
-        kwargs["data"] = kwargs["data"].encode("utf-8")
+    new_kwargs = kwargs.copy()
+    if "data" in new_kwargs:
+        new_kwargs["data"] = new_kwargs["data"].encode("utf-8")
 
-    response = session.post(url=url, timeout=timeout, **kwargs)
+    response = session.post(url=url, timeout=timeout, **new_kwargs)
 
     if response.status_code == 504:  # gateway timeout
         msg = f"Got status code {response.status_code}. Trying again soon..."
