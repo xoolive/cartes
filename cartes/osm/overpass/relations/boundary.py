@@ -8,9 +8,9 @@ from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import linemerge, transform, unary_union
 
-from .. import Overpass
 from ....utils.cache import cached_property
 from ....utils.geometry import reorient
+from .. import Overpass
 from ..core import Relation
 
 
@@ -121,6 +121,7 @@ class Boundary(Relation):
                         holes=list(i for i in inner if Polygon(o).contains(i)),
                     )
                     for o in outer
+                    if len(o.coords) > 2
                 ]
                 shape = MultiPolygon(list_)
             else:
@@ -130,6 +131,7 @@ class Boundary(Relation):
                         holes=[inner] if Polygon(o).contains(inner) else None,
                     )
                     for o in outer
+                    if len(o.coords) > 2
                 ]
                 shape = MultiPolygon(list_)
         else:
@@ -138,7 +140,8 @@ class Boundary(Relation):
             else:
                 shape = Polygon(outer, inner)
 
-        self.json["geometry"] = self.shape = reorient(shape)
+        self.shape = reorient(shape)
+        self.json["geometry"] = self.shape
 
     def intersections(self) -> Iterator[Tuple[int, Set[int]]]:
         all_sets: Dict[int, Set[int]] = dict(

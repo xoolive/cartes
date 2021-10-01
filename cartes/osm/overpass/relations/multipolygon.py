@@ -71,22 +71,25 @@ class MultiPolygon(Relation):
             "Falling back to Polygon without holes."
         )
         try:
-            self.json["geometry"] = self.shape = Polygon(
+            self.shape = Polygon(
                 shell=parts["outer"], holes=parts.get("inner", None)
             )
+            self.json["geometry"] = self.shape
         except NotImplementedError:
             logging.warning(msg)
             try:
-                self.json["geometry"] = self.shape = unary_union(
+                self.shape = unary_union(
                     list(Polygon(part) for part in parts["outer"])
                 )
+                self.json["geometry"] = self.shape
             except ValueError:
                 logging.warning(f"Invalid geometry with id {json['id_']}")
                 self.json["geometry"] = self.shape = GeometryCollection()
 
         except ValueError:  # YSSY
             logging.warning(msg)
-            self.json["geometry"] = self.shape = Polygon(shell=parts["outer"])
+            self.shape = Polygon(shell=parts["outer"])
+            self.json["geometry"] = self.shape
 
 
 class Building(MultiPolygon):
