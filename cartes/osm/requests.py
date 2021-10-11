@@ -4,7 +4,7 @@ import logging
 import time
 from io import BytesIO
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import requests
 from appdirs import user_cache_dir
@@ -12,7 +12,7 @@ from tqdm.autonotebook import tqdm
 
 from ..utils.cache import CacheResults
 
-JSONType = Any  # TODO Dict[str, Any]
+JSONType = Any
 GeoJSONType = Any
 session = requests.Session()
 
@@ -36,9 +36,23 @@ def _write_json(json_: JSONType, cache_file) -> None:  # coverage: ignore
     cache_file.write_text(json.dumps(json_, indent=2))
 
 
-def _read_json(cache_file: Path) -> JSONType:
+def _read_json(cache_file: Path) -> Optional[JSONType]:
     logging.info(f"Reading cache file {cache_file}")
-    return json.loads(cache_file.read_text())
+    json_ = json.loads(cache_file.read_text())
+
+    if isinstance(json_, list):
+        return json_
+
+    elements = json_.get("elements", None)
+    if elements is None:
+        return json_
+
+    # Detect past failed cached Overpass queries
+    logging.debug(f"Number of elements in cached results: {len(elements)}")
+    if len(elements) == 0:
+        return None
+
+    return json_
 
 
 @CacheResults(

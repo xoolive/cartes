@@ -116,7 +116,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
 
         The request is based on the latlon coordinates of the element.
         >>> Nominatim.reverse(43.608, 1.442)
-        Nominatim {'place_id': 154834803, 'display_name': 'Musée Saint-Raymond, ...', 'lat': 43.60783, 'lon': 1.44112}
+        Nominatim {'place_id': 155591309, 'display_name': 'Basilique Saint-Sernin, ...', 'lat': 43.6..., 'lon': 1.44...}
         """
 
         params = dict(

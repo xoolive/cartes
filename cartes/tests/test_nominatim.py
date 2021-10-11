@@ -21,6 +21,6 @@ def test_lookup() -> None:
 def test_reverse() -> None:
     musee = Nominatim.reverse(43.608, 1.442)
     assert musee is not None
-    assert musee.tourism == "Musée Saint-Raymond"
+    assert musee.name == "Basilique Saint-Sernin"
     assert musee.road == "Place Saint-Sernin"
     assert musee.osm_type == "way"
