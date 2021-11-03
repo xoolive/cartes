@@ -18,7 +18,8 @@ class Generator(ABC):
         elt = getattr(obj, self.private_name, None)
         if elt is None:
             return ""
-        return self.generate(elt, obj)
+        logging.info(f"{self.public_name} called with geom={obj.geometry}")
+        return self.generate(elt, obj, geom=obj.geometry)
 
     def __set__(self, obj, value):
         if value is not None:
@@ -34,7 +35,7 @@ class Generator(ABC):
         pass
 
     @abstractmethod
-    def generate(self, elt, obj) -> str:
+    def generate(self, elt, obj, geom: bool = True) -> str:
         pass
 
 
@@ -74,7 +75,7 @@ class Area(Generator):
                     "numeric, str or a dict[str, str]"
                 )
 
-    def generate(self, elt, obj) -> str:
+    def generate(self, elt, obj, geom: bool = True) -> str:
         res = ";"
         if isinstance(elt, dict):
             if "as_" in elt:
@@ -111,7 +112,7 @@ class Bounds(Generator):
                 "a tuple of four float (west, south, east, north)"
             )
 
-    def generate(self, value, obj) -> str:
+    def generate(self, value, obj, geom: bool = True) -> str:
         west, south, east, north = value
         return f"[bbox:{south},{west},{north},{east}]"
 
@@ -127,18 +128,19 @@ class NodeWayRel(Generator):
     def validate(self, value):
         pass
 
-    def generate(self, value, obj) -> str:
-        return "".join(self.generate_single(elt, obj) for elt in value)
+    def generate(self, value, obj, geom: bool = True) -> str:
+        return "".join(self.generate_single(elt, obj, geom) for elt in value)
 
-    def generate_single(self, elt, obj) -> str:
+    def generate_single(self, elt, obj, geom: bool) -> str:
+        geom_str = " geom" if geom else ""
         for res, elt in elt.items():
             break
         # Particular situation of pivot relations
         if list(elt.keys()) == ["area"]:
             if elt["area"] is True:
-                res += "(pivot);out geom;"
+                res += f"(pivot);out{geom_str};"
             else:
-                res += f"(pivot.{elt['area']});out geom;"
+                res += f"(pivot.{elt['area']});out{geom_str};"
             return res
         if getattr(obj, "_area", None) is not None:
             area_name = elt.get("area", None)
@@ -151,7 +153,7 @@ class NodeWayRel(Generator):
             res += f"(around:{elt['around']})"
             del elt["around"]
         res += "".join(expand(key, value) for key, value in elt.items())
-        res += ";out geom;"
+        res += f";out{geom_str};"
         return res
 
 
@@ -185,12 +187,17 @@ class Query:
         *,
         out: str = "json",
         timeout: int = 180,
+        geometry: bool = True,
         **kwargs: QueryType,
     ) -> None:
         self.out = out
         self.timeout = timeout
+        self.geometry = geometry
         self.area = kwargs.get("area", None)
         self.bounds = kwargs.get("bounds", None)
+
+        if not geometry:
+            logging.warn("geometry=False functionality still experimental")
 
         node = make_querytype(kwargs.get("node", None), "node")
         way = make_querytype(kwargs.get("way", None), "way")

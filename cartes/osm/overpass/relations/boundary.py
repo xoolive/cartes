@@ -69,7 +69,8 @@ class Boundary(Relation):
         )
 
         self._build_geometry_parts()
-        self._make_geometry(self.known_chunks)
+        if len(self.known_chunks) > 0:
+            self._make_geometry(self.known_chunks)
 
     def simplify(
         self: T,
@@ -165,9 +166,12 @@ class Boundary(Relation):
         for role, it in itertools.groupby(
             (self.parsed_keys[key] for key in elements), key=itemgetter("role")
         ):
-            elts = list(elt["geometry"] for elt in it)
-            chunk = unary_union(elts)
-            self.known_chunks.include(chunk, role)
+            elts = list(
+                elt["geometry"] for elt in it if elt["geometry"] is not None
+            )
+            if len(elts) > 0:
+                chunk = unary_union(elts)
+                self.known_chunks.include(chunk, role)
 
     def _build_geometry_parts(self) -> BaseGeometry:
 

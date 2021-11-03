@@ -53,12 +53,13 @@ class OverpassDataDescriptor(Descriptor[gpd.GeoDataFrame]):
         else:
             x = data.assign(latitude=None, longitude=None)
 
-        if x.shape[0] > 0:
+        if x.shape[0] > 0 and "geometry" in x.columns:
             x = x.query("geometry == geometry and not geometry.is_empty")
-            data.loc[x.index, ["latitude", "longitude"]] = x.assign(
-                longitude=lambda df: df.geometry.centroid.x,
-                latitude=lambda df: df.geometry.centroid.y,
-            )[["latitude", "longitude"]]
+            if x.shape[0] > 0:
+                data.loc[x.index, ["latitude", "longitude"]] = x.assign(
+                    longitude=lambda df: df.geometry.centroid.x,
+                    latitude=lambda df: df.geometry.centroid.y,
+                )[["latitude", "longitude"]]
 
         if "geometry" in data.columns:
             data = data.assign(
@@ -281,7 +282,7 @@ class Overpass:
             type_=elt["type"],
             latitude=elt["lat"],
             longitude=elt["lon"],
-            geometry=to_geometry(elt),
+            geometry=to_geometry(elt) if elt.get("geometry", None) else None,
             **elt["tags"],
         )
 
@@ -292,7 +293,7 @@ class Overpass:
             id_=elt["id"],
             type_=elt["type"],
             nodes=elt["nodes"],
-            geometry=to_geometry(elt),
+            geometry=to_geometry(elt) if elt.get("geometry", None) else None,
             **elt["tags"],
         )
 
@@ -309,7 +310,7 @@ class Overpass:
         ).json
 
     @cached_property
-    def all_members(self) -> Dict[int, List[Dict[str, Union[int, str]]]]:
+    def all_members(self) -> Dict[int, List[Dict[str, Union[None, int, str]]]]:
         return dict(
             (
                 elt["id"],
@@ -317,7 +318,9 @@ class Overpass:
                     {
                         "ref": entry["ref"],
                         "role": entry["role"],
-                        "geometry": to_geometry(entry),
+                        "geometry": to_geometry(entry)
+                        if entry.get("geometry", None)
+                        else None,
                     }
                     for entry in elt.get("members", [])
                     if entry["type"] != "relation"
@@ -346,7 +349,7 @@ class Overpass:
 
     def plot(self, ax, by: Optional[str] = None, **kwargs):
         if by is None:
-            return self.data.plot(ax=ax, transform=PlateCarree())
+            return self.data.plot(ax=ax, transform=PlateCarree(), **kwargs)
         for key, elt in self.data.groupby(by):
             if (
                 by not in matplotlib_style
