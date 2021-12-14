@@ -79,3 +79,46 @@ Some definitions in the library set very narrow bounds which are then incompatib
 
 .. raw:: html
     :file: _static/crs_custom.html
+
+Use custom projection in Altair
+-------------------------------
+
+Projections can be passed to the ``.project()`` method with the ``**`` unpacking
+operator. Note that not all projections defined in custom have an equivalent in
+Altair, in which case an exception could be raised.
+
+.. jupyter-execute::
+
+    import altair as alt
+    from vega_datasets import data
+
+    from cartes.crs import (
+        Orthographic,
+        GeoscienceAustraliaLambert,
+        EPSG_3348,
+        UTM,
+    )
+
+    world = alt.topo_feature(data.world_110m.url, "countries")
+    base = alt.Chart(world).mark_geoshape(stroke="white").properties(width=200, height=200)
+
+    (
+        alt.concat(
+            base.project("mercator").properties(title="Mercator"),
+            base.project(**Orthographic()).properties(title="Orthographic"),
+            base.project(**Orthographic(110, 35)).properties(title="Orthographic(110, 35)"),
+            base.project(**GeoscienceAustraliaLambert())
+            .properties(title="Geoscience Australia Lambert")
+            .transform_filter("datum.id == 36"),
+            base.project(**EPSG_3348())
+            .properties(title="EPSG:3348")
+            .transform_filter("datum.id == 124"),
+            base.project(**UTM(47))
+            .properties(title="UTM(47)")
+            .transform_filter("datum.id == 356"),
+            columns=3,
+        )
+        .configure_view(stroke=None)
+        .configure_title(font="Fira Sans", fontSize=14, anchor="start")
+        .configure_legend(orient="bottom", columns=6)
+    )
