@@ -43,7 +43,16 @@ class Waterway(Relation):
         )
 
         parts = dict(
-            (role, unary_union(list(elt["geometry"] for elt in it)))
+            (
+                role,
+                unary_union(
+                    list(
+                        elt["geometry"]
+                        for elt in it
+                        if elt.get("geometry", None)
+                    )
+                ),
+            )
             for role, it in itertools.groupby(
                 parsed_keys.values(), key=itemgetter("role")
             )
@@ -62,4 +71,7 @@ class Waterway(Relation):
                 else side_stream
             )
 
-        self.json["geometry"] = self.shape = unary_union(elements)
+        list_ = list(elt for elt in elements if elt is not None)
+        if len(list_) == 0:
+            self.json["geometry"] = self.shape = None
+        self.json["geometry"] = self.shape = unary_union(list_)

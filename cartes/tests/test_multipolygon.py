@@ -30,4 +30,6 @@ out geom;
  """
     )
     # Useless test, just check it works
+    assert tls.simplify(1e3, max_workers=1).data.shape[0] == 6
+
     assert tls.simplify(1e3).data.shape[0] == 6

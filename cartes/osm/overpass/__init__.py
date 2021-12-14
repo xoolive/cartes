@@ -132,7 +132,7 @@ class Overpass:
                 .query("not empty")
             )
             if x.shape[0] > 0:
-                self._bounds = unary_union(self.data.geometry).bounds
+                self._bounds = unary_union(x.geometry).bounds
                 return self._bounds
         self._bounds = tuple(  # type: ignore
             eval(key[:3])(

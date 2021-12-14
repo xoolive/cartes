@@ -18,7 +18,26 @@ exclude = '''
 )/
 '''
 
+[tool.mypy]
+# Specify the target platform details in config, so your developers are
+# free to run mypy on Windows, Linux, or macOS and get consistent
+# results.
+python_version = 3.7
+
+check_untyped_defs = true
+follow_imports = "normal"
+ignore_missing_imports = true
+strict_optional = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
 [tool.isort]
 line_length = 80
 multi_line_output = 5
 balanced_wrapping = true
+
+[tool.pytest.ini_options]
+addopts = "--log-level=INFO --color=yes --doctest-modules --doctest-report ndiff"
+testpaths = ["cartes"]
+doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]

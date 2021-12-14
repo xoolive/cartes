@@ -1,12 +1,13 @@
 import itertools
 from collections import UserDict
 from operator import itemgetter
-from typing import Dict, Iterator, Set, Tuple, TypeVar, Union, cast
+from typing import Dict, Iterator, List, Set, Tuple, TypeVar, Union, cast
 
 from pyproj import Proj, Transformer
-from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon
+from shapely.geometry import MultiLineString, MultiPolygon, Polygon
 from shapely.geometry.base import BaseGeometry
-from shapely.ops import linemerge, transform, unary_union
+from shapely.geometry.collection import GeometryCollection
+from shapely.ops import polygonize, transform, unary_union
 
 from ....utils.cache import cached_property
 from ....utils.geometry import reorient
@@ -21,7 +22,7 @@ class RelationsDict(UserDict):
 
     def include(self, chunk: BaseGeometry, role: str):
         if isinstance(chunk, MultiLineString):
-            for c in chunk:
+            for c in chunk.geoms:
                 self[role].append(c)
         else:
             self[role].append(chunk)
@@ -111,35 +112,21 @@ class Boundary(Relation):
 
     def _make_geometry(self, parts: RelationsDict):
 
-        outer = linemerge(parts["outer"])
-        inner = linemerge(parts["inner"])
+        outer: List[Polygon] = list(polygonize(parts["outer"]))
+        inner: List[Polygon] = list(polygonize(parts["inner"]))
 
-        if isinstance(outer, MultiLineString):
-            if isinstance(inner, MultiLineString):
-                list_ = [
-                    Polygon(
-                        o,
-                        holes=list(i for i in inner if Polygon(o).contains(i)),
-                    )
-                    for o in outer
-                    if len(o.coords) > 2
-                ]
-                shape = MultiPolygon(list_)
-            else:
-                list_ = [
-                    Polygon(
-                        o,
-                        holes=[inner] if Polygon(o).contains(inner) else None,
-                    )
-                    for o in outer
-                    if len(o.coords) > 2
-                ]
-                shape = MultiPolygon(list_)
+        if len(outer) == 0:
+            return GeometryCollection()
+
+        if len(outer) > 1:
+            list_ = [
+                Polygon(o, holes=list(i for i in inner if o.contains(i)))
+                for o in outer
+            ]
+            shape = MultiPolygon(list_)
+
         else:
-            if isinstance(inner, LineString):
-                shape = Polygon(outer, [inner])
-            else:
-                shape = Polygon(outer, inner)
+            shape = Polygon(outer[0], inner)
 
         self.shape = reorient(shape)
         self.json["geometry"] = self.shape

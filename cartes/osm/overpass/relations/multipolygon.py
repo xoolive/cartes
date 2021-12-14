@@ -43,15 +43,24 @@ class MultiPolygon(Relation):
 
         self.parent: Overpass = json["_parent"]
         parsed_keys = dict(
-            (elt["ref"], elt) for elt in self.parent.all_members[json["id_"]]
+            (elt["ref"], elt)
+            for elt in self.parent.all_members[json["id_"]]
+            if elt is not None
         )
 
-        parts = dict(
-            (role, unary_union(list(elt["geometry"] for elt in it)))
-            for role, it in itertools.groupby(
-                parsed_keys.values(), key=itemgetter("role")
+        try:
+            parts = dict(
+                (role, unary_union(list(elt["geometry"] for elt in it)))
+                for role, it in itertools.groupby(
+                    parsed_keys.values(), key=itemgetter("role")
+                )
             )
-        )
+        except AttributeError:
+            logging.warning(
+                f"Invalid geometry with id {json['id_']} (attribute error)"
+            )
+            self.json["geometry"] = self.shape = GeometryCollection()
+            return
 
         if "outer" not in parts:  # LEBL
             logging.warning(f"Invalid geometry with id {json['id_']}")
@@ -61,10 +70,12 @@ class MultiPolygon(Relation):
         if isinstance(parts["outer"], MultiLineString):  # LFPO
             parts["outer"] = linemerge(parts["outer"])
 
-        if parts.get("inner", None) and not isinstance(  # EDDF
-            parts["inner"], MultiLineString
-        ):
-            parts["inner"] = [parts["inner"]]
+        if parts.get("inner", None):
+            if isinstance(parts["inner"], MultiLineString):
+                parts["inner"] = parts["inner"].geoms
+            else:  # EDDF
+                # LineString has not attribute geoms...
+                parts["inner"] = [parts["inner"]]
 
         msg = (
             f"Error parsing multigeometry with id {json['id_']}. "
@@ -90,6 +101,11 @@ class MultiPolygon(Relation):
             logging.warning(msg)
             self.shape = Polygon(shell=parts["outer"])
             self.json["geometry"] = self.shape
+        except Exception:
+            logging.warning(
+                f"Error parsing multigeometry with id {json['id_']}. "
+            )
+            self.json["geometry"] = GeometryCollection()
 
 
 class Building(MultiPolygon):

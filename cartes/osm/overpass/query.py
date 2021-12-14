@@ -18,7 +18,8 @@ class Generator(ABC):
         elt = getattr(obj, self.private_name, None)
         if elt is None:
             return ""
-        logging.info(f"{self.public_name} called with geom={obj.geometry}")
+        if not obj.geometry:
+            logging.info(f"{self.public_name} called with geom={obj.geometry}")
         return self.generate(elt, obj, geom=obj.geometry)
 
     def __set__(self, obj, value):
@@ -39,21 +40,29 @@ class Generator(ABC):
         pass
 
 
-def expand(key: str, value: Union[bool, str, Dict[str, str]]):
+def expand(key: str, value: Union[bool, str, Dict[str, str]], op=dict(op="=")):
     if not re.match(r"^[\w\d_]+$", key):
         key = f'"{key}"'
     if isinstance(value, bool):
         return f"[{key}]"
     if isinstance(value, Real):
-        return f"[{key}={value}]"
+        return f"[{key}{op['op']}{value}]"
     if isinstance(value, str):
         if not re.match(r"^[\w\d_]+$", value):
             value = f'"{value}"'
-        return f"[{key}={value}]"
+        return f"[{key}{op['op']}{value}]"
+    if isinstance(value, str):
+        if not re.match(r"^[\w\d_]+$", value):
+            value = f'"{value}"'
+        return f"[{key}{op['op']}{value}]"
+    if isinstance(value, list):
+        return f'[{key}{op["op"]}"{"|".join(value)}"]'
+    if "op" in value:
+        return expand(key, value["value"], op=dict(op=value["op"]))
     if "regex" in value:
         value = value["regex"]
-        return f'[{key}~"{value}"]'
-    raise ValueError(f"Unknown elements in area dictionary {value}")
+        return f'[{key}{op.get("fuzzy", "~")}"{value}"]'
+    raise ValueError(f"Unknown elements in dictionary {value}")
 
 
 class Area(Generator):
@@ -195,6 +204,7 @@ class Query:
         self.geometry = geometry
         self.area = kwargs.get("area", None)
         self.bounds = kwargs.get("bounds", None)
+        self.date = kwargs.get("date", None)
 
         if not geometry:
             logging.warn("geometry=False functionality still experimental")
@@ -207,7 +217,8 @@ class Query:
         kwargs = dict(
             (key, value)
             for key, value in kwargs.items()
-            if key not in ["area", "bounds", "node", "way", "rel", "nwr"]
+            if key
+            not in ["area", "bounds", "date", "node", "way", "rel", "nwr"]
         )
         if len(kwargs):
             nwr.append(dict(nwr=kwargs))
@@ -215,7 +226,11 @@ class Query:
         self.nwr = nwr + node + way + rel
 
     def generate(self) -> str:
-        res = f"[out:{self.out}][timeout:{self.timeout}]{self.bounds};"
+        res = (
+            f"[out:{self.out}][timeout:{self.timeout}]"
+            + (f"[date:'{self.date}']" if self.date is not None else "")
+            + f"{self.bounds};"
+        )
         res += f"{self.area}"
         res += f"{self.nwr}"
         return res
