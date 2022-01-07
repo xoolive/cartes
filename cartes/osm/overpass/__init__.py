@@ -5,11 +5,12 @@ from operator import itemgetter
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import geopandas as gpd
+from tqdm.autonotebook import tqdm
+
 import pandas as pd
 from pyproj import Proj
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import unary_union
-from tqdm.autonotebook import tqdm
 
 from ...crs import PlateCarree  # type: ignore
 from ...dataviz import matplotlib_style

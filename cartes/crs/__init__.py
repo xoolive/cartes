@@ -24,18 +24,38 @@ import warnings
 
 # All projections first come from the regular Cartopy CRS module
 from cartopy.crs import (  # noqa: F401, F403
-    Globe, InterruptedGoodeHomolosine, LambertCylindrical,
-    Miller, Projection, Robinson, RotatedPole, Sinusoidal
+    Globe,
+    InterruptedGoodeHomolosine,
+    LambertCylindrical,
+    Miller,
+    Projection,
+    Robinson,
+    RotatedPole,
+    Sinusoidal,
 )
 
 from . import meta
 from .info import valid_crs  # noqa: F401
+
 # These ones can be unpacked in altair!
 from .vega_params import (  # noqa: F401, F403
-    OSGB, OSNI, UTM, AlbersEqualArea, AzimuthalEquidistant,
-    EqualEarth, EquidistantConic, EuroPP, Gnomonic,
-    LambertAzimuthalEqualArea, LambertConformal, Mercator, Mollweide,
-    Orthographic, PlateCarree, Stereographic, TransverseMercator
+    OSGB,
+    OSNI,
+    UTM,
+    AlbersEqualArea,
+    AzimuthalEquidistant,
+    EqualEarth,
+    EquidistantConic,
+    EuroPP,
+    Gnomonic,
+    LambertAzimuthalEqualArea,
+    LambertConformal,
+    Mercator,
+    Mollweide,
+    Orthographic,
+    PlateCarree,
+    Stereographic,
+    TransverseMercator,
 )
 
 # fmt: on

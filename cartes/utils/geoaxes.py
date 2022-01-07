@@ -1,19 +1,19 @@
 from __future__ import annotations
 
 import geopandas as gpd
-import numpy as np
 from cartopy.crs import Projection
 from cartopy.img_transform import mesh_projection
 from cartopy.mpl.geoaxes import GeoAxesSubplot
+
+import numpy as np
 from pyproj import Proj, Transformer
 from shapely.geometry import Polygon, box
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform
 
-from cartes.utils.geometry import fix_geodataframe
-
 from ..core import GeoObject
 from ..osm import Nominatim
+from ..utils.geometry import fix_geodataframe
 
 # We patch the set_extent method to use GeoObjects instead.
 

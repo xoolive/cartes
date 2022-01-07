@@ -1,8 +1,9 @@
 import json
 from pathlib import Path
 
-import numpy as np
 from matplotlib import path
+
+import numpy as np
 
 current_dir = Path(__file__).parent
 __all__ = list(p.stem for p in current_dir.glob("*.json"))

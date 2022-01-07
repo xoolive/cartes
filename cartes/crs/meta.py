@@ -7,17 +7,34 @@ from abc import ABCMeta
 from typing import Any, Dict, List
 
 from cartopy.crs import (
-    Globe, InterruptedGoodeHomolosine, LambertCylindrical,
-    Miller, Projection, Robinson, RotatedPole, Sinusoidal
+    Globe,
+    InterruptedGoodeHomolosine,
+    LambertCylindrical,
+    Miller,
+    Projection,
+    Robinson,
+    RotatedPole,
+    Sinusoidal,
 )
+
 from pyproj import CRS, Proj, Transformer
 from shapely import geometry
 from shapely.ops import transform
 
 from .vega_params import (  # These ones can be unpacked in altair!
-    UTM, AlbersEqualArea, AzimuthalEquidistant, EqualEarth,
-    EquidistantConic, Gnomonic, LambertAzimuthalEqualArea, LambertConformal,
-    Mercator, Mollweide, Orthographic, Stereographic, TransverseMercator
+    UTM,
+    AlbersEqualArea,
+    AzimuthalEquidistant,
+    EqualEarth,
+    EquidistantConic,
+    Gnomonic,
+    LambertAzimuthalEqualArea,
+    LambertConformal,
+    Mercator,
+    Mollweide,
+    Orthographic,
+    Stereographic,
+    TransverseMercator,
 )
 
 # fmt:on
