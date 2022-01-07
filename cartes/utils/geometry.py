@@ -1,8 +1,9 @@
 from typing import Dict
 
+import geopandas as gpd
 from pyproj import Proj, Transformer
 from shapely.geometry import MultiPolygon, Polygon, base, polygon
-from shapely.ops import transform
+from shapely.ops import polygonize, transform
 
 
 def reorient(shape: base.BaseGeometry, orientation=-1) -> base.BaseGeometry:
@@ -40,3 +41,16 @@ def simplify(
         transformer_back.transform,
         transform(transformer_fwd.transform, shape).simplify(resolution),
     )
+
+
+def fix_polygon(elt: base.BaseGeometry) -> MultiPolygon:
+    """Tentative to fix an invalid (multi)polygon."""
+    return MultiPolygon(list(polygonize(elt)))
+
+
+def fix_geodataframe(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Fix (in place) geometries in a GeoDataFrame."""
+    if ~gdf.is_valid.sum():
+        fixed = gdf.loc[~gdf.is_valid, "geometry"].apply(fix_polygon)
+        gdf.loc[~gdf.is_valid, "geometry"] = fixed
+    return gdf
