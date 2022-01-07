@@ -1,7 +1,12 @@
+from __future__ import annotations
+
+import json
 import logging
 import sys
 from pathlib import Path
-from typing import Callable, Dict, Generic, Hashable, TypeVar, Union
+from typing import Any, Callable, Dict, Generic, Hashable, TypeVar, Union
+
+import pandas as pd
 
 from .descriptors import DirectoryCreateIfNotExists
 
@@ -79,6 +84,8 @@ class CacheFunction(Generic[T]):
         if res is not None:
             return res
 
+        logging.info(f"Looking for cache file: {cache_file}")
+
         if cache_file.exists():
             logging.info(f"Using cache file: {cache_file}")
             res = self.reader(cache_file)
@@ -124,3 +131,29 @@ class CacheResults(Generic[T]):
         )
         cache_function.__doc__ = function.__doc__
         return cache_function
+
+
+def write_json(content: Any, cache_file: Path) -> None:
+    logging.info(f"Writing cache file {cache_file}")
+    directory = cache_file.parent
+    if not directory.exists():
+        directory.mkdir(parents=True)
+    cache_file.write_text(json.dumps(content))
+
+
+def read_json(cache_file: Path) -> Any:
+    logging.info(f"Reading cache file {cache_file}")
+    return json.loads(cache_file.read_text())
+
+
+def write_df_json(df: pd.DataFrame, cache_file: Path) -> None:
+    logging.info(f"Writing cache file {cache_file}")
+    directory = cache_file.parent
+    if not directory.exists():
+        directory.mkdir(parents=True)
+    df.to_json(cache_file, orient="records")
+
+
+def read_json_df(cache_file: Path) -> pd.DataFrame | None:
+    logging.info(f"Reading cache file {cache_file}")
+    return pd.read_json(cache_file)

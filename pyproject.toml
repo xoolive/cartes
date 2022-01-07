@@ -34,8 +34,8 @@ warn_unused_ignores = true
 
 [tool.isort]
 line_length = 80
-multi_line_output = 5
-balanced_wrapping = true
+profile = "black"
+known_first_party = ["numpy", "pandas", "pyproj", "shapely"]
 
 [tool.pytest.ini_options]
 addopts = "--log-level=INFO --color=yes --doctest-modules --doctest-report ndiff"
