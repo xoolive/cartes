@@ -12,6 +12,7 @@ Basic examples
    gallery/airports
    gallery/terminal
    gallery/mercantour
+   gallery/switzerland
 
 Advanced examples
 -----------------
