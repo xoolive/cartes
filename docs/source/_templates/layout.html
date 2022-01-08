@@ -20,4 +20,13 @@
   gtag("config", "UA-412789-4");
 </script>
 
+<!-- Remove hard-coded borders on pandas dataframes -->
+<script>
+  const elements = document.getElementsByClassName("dataframe");
+  for (let i = 0; i < elements.length; i++) {
+    const elt = elements[i];
+    elt.setAttribute("border", 0);
+  }
+</script>
+
 {% endblock %}

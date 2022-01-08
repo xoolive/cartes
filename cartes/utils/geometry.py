@@ -51,6 +51,7 @@ def fix_polygon(elt: base.BaseGeometry) -> MultiPolygon:
 
 def fix_geodataframe(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """Fix (in place) geometries in a GeoDataFrame."""
+    gdf = gdf.copy()
     if ~gdf.is_valid.sum():
         fixed = gdf.loc[~gdf.is_valid, "geometry"].apply(fix_polygon)
         gdf.loc[~gdf.is_valid, "geometry"] = fixed

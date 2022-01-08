@@ -1,17 +1,14 @@
 Data visualisation
 ==================
 
-Matplotlib
-----------
+.. warning::
 
-(coming soon, see gallery in the meantime)
+    | Guidance for Matplotlib and ipyleaflet coming soon.
+    | Refer to the gallery in the meantime.
 
-Altair
-------
 
-(coming soon, see gallery in the meantime)
+.. toctree::
+   :maxdepth: 1
 
-ipyleaflet
-----------
+   altair
 
-(in a future version)
