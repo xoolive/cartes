@@ -89,6 +89,13 @@ div.bottomnav {
   clear: left;
 }
 
+div.jupyter_container {
+  border: none;
+}
+div.jupyter_container .output {
+  padding: 10px;
+}
+
 /* Front-page Example Showcase */
 #showcase {
   width: 100%;
