@@ -202,7 +202,7 @@ class TopoCatalogue(HTMLMixin):
         return alt.topo_feature(self.url, feature=feature)
 
     @property
-    def gdf(self):
+    def data(self):
         feature = self.features[0]
         return gpd.read_file(
             StringIO(json.dumps(get_json(self))), layout=feature

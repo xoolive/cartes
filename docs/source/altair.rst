@@ -66,7 +66,7 @@ But first, the data, together with the definition of a bounding box.
     from shapely.geometry import box
     import altair as alt
 
-    data = world.countries.sans_.gdf
+    data = world.countries.sans_.data
     projection = EuroPP()
 
     west, east, south, north = extent = (-20, 40, 30, 80)

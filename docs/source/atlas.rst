@@ -49,7 +49,7 @@ When only one element is left, you can access:
 - | a ``topo_feature`` element, for a direct access in Altair.
   | Here, data is not included in the Altair JSON, only a link to the url.
 
-- | a ``gdf`` element for the corresponding Geopandas dataframe.
+- | a ``data`` element for the corresponding Geopandas dataframe.
   | This option is comfortable for exploring data, or for further postprocessing.
 
 
@@ -72,7 +72,7 @@ Corresponding data is available, and stored in cache:
 
 .. jupyter-execute::
 
-    europe.gdf.head()
+    europe.data.head()
 
 It is possible to chain filtering:
 
@@ -89,18 +89,18 @@ It is possible to chain filtering:
 Simple maps
 -----------
 
-The ``gdf`` attribute is convenient to explore data and create a first visualisation:
+The ``data`` attribute is convenient to explore data and create a first visualisation:
 
 .. jupyter-execute::
 
-    japan.towns.gdf.query('NAME_1 == "Shiga"').iloc[:15, :10]
+    japan.towns.data.query('NAME_1 == "Shiga"').iloc[:15, :10]
 
 .. jupyter-execute::
 
     from cartes.crs import JGD2000
 
     (
-        alt.Chart(japan.towns.gdf.query('NAME_1 == "Shiga"'))
+        alt.Chart(japan.towns.data.query('NAME_1 == "Shiga"'))
         .mark_geoshape(stroke="white")
         .encode(
             color=alt.condition(
