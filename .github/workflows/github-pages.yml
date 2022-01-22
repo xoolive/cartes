@@ -34,6 +34,15 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
+          # upgrade to proj>=8.0 for Cartopy 0.20
+          git clone https://github.com/OSGeo/PROJ
+          cd PROJ
+          git checkout 8.2.1
+          mkdir build; cd build
+          cmake ..
+          cmake --build .
+          sudo cmake --build . --target install
+          cd ../..
           poetry install
 
       - name: Populate cache if need be
@@ -42,6 +51,8 @@ jobs:
           poetry run python -c "from cartes.atlas import default, world_atlas"
 
       - name: Build pages
+        env:
+          LD_LIBRARY_PATH: /usr/local/lib
         run: |
           cd docs && poetry run make html
 

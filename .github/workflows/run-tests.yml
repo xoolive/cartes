@@ -33,6 +33,15 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
+          # upgrade to proj>=8.0 for Cartopy 0.20
+          git clone https://github.com/OSGeo/PROJ
+          cd PROJ
+          git checkout 8.2.1
+          mkdir build; cd build
+          cmake ..
+          cmake --build .
+          sudo cmake --build . --target install
+          cd ../..
           poetry install
 
       - name: Style checking
@@ -46,6 +55,8 @@ jobs:
           poetry run mypy cartes
 
       - name: Run tests
+        env:
+          LD_LIBRARY_PATH: /usr/local/lib
         run: |
           poetry run pytest --cov --cov-report term-missing --ignore=cartes/__main__.py
 
