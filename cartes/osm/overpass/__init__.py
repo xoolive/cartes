@@ -166,6 +166,12 @@ class Overpass:
     def assign(self, *args, **kwargs) -> "Overpass":
         return Overpass(self.json, self.data.assign(*args, **kwargs))
 
+    def head(self, *args, **kwargs) -> "Overpass":
+        return Overpass(self.json, self.data.head(*args, **kwargs))
+
+    def tail(self, *args, **kwargs) -> "Overpass":
+        return Overpass(self.json, self.data.tail(*args, **kwargs))
+
     def query(self, *args, **kwargs) -> "Overpass":
         return Overpass(self.json, self.data.query(*args, **kwargs))
 

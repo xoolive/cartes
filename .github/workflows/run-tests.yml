@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         # os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.7", "3.8", "3.9"] #, "3.10" bug in Fiona for now
+        python-version: ["3.8", "3.9", "3.10"] #, "3.10" bug in Fiona for now
     steps:
       - uses: actions/checkout@v2
 
@@ -32,6 +32,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo apt update
           sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
           # upgrade to proj>=8.0 for Cartopy 0.20
           git clone https://github.com/OSGeo/PROJ

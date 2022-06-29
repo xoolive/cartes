@@ -95,7 +95,7 @@ class GeoObject(ABC):
             return 17
 
         def func(n):
-            factor = (360 * 2 ** -n) / (x2 - x1)
+            factor = (360 * 2**-n) / (x2 - x1)
             if factor < 1:
                 return 1 / factor
             return factor

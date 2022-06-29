@@ -33,6 +33,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo apt update
           sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
           # upgrade to proj>=8.0 for Cartopy 0.20
           git clone https://github.com/OSGeo/PROJ
@@ -47,6 +48,8 @@ jobs:
 
       - name: Populate cache if need be
         if: steps.cache-folder.outputs.cache-hit != 'true'
+        env:
+          LD_LIBRARY_PATH: /usr/local/lib
         run: |
           poetry run python -c "from cartes.atlas import default, world_atlas"
 
