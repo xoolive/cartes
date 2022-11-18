@@ -42,12 +42,10 @@ requests = "^2.27"
 Shapely = "^1.8"
 aiohttp = "^3.8"
 appdirs = "^1.4"
-importlib-metadata = "^4.2"
 lxml = "^4.7"
 tqdm = "^4.62"
 Cartopy = ">=0.19"
 pyproj = ">=3.1"
-jsonschema = "^3.0"
 beautifulsoup4 = "^4.10"
 
 [tool.poetry.dev-dependencies]

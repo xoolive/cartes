@@ -1,13 +1,13 @@
+import importlib.metadata
 import warnings
 
-import importlib_metadata
 from tqdm import TqdmExperimentalWarning
 
 # Monkey-patches GeoAxesSubplot for .set_extent()
 # Monkey-patches GeoDataFrame for .extent()
 from .utils import geoaxes  # noqa: F401
 
-__version__ = importlib_metadata.version("cartes")
+__version__ = importlib.metadata.version("cartes")
 
 
 # Silence this warning about autonotebook mode for tqdm
