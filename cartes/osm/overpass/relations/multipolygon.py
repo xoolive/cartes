@@ -2,13 +2,16 @@ import itertools
 import logging
 from operator import itemgetter
 
+from shapely.geometry import MultiPolygon as ShapelyMPL
 from shapely.geometry import Polygon
 from shapely.geometry.collection import GeometryCollection
 from shapely.geometry.multilinestring import MultiLineString
-from shapely.ops import linemerge, unary_union
+from shapely.ops import linemerge, polygonize, unary_union
 
 from .. import Overpass
 from ..core import Relation
+
+_log = logging.getLogger(__name__)
 
 
 class MultiPolygon(Relation):
@@ -48,27 +51,40 @@ class MultiPolygon(Relation):
             if elt is not None
         )
 
-        try:
-            parts = dict(
-                (role, unary_union(list(elt["geometry"] for elt in it)))
-                for role, it in itertools.groupby(
-                    parsed_keys.values(), key=itemgetter("role")
-                )
+        parts = dict(
+            (
+                role,
+                unary_union(
+                    list(
+                        elt["geometry"]
+                        for elt in it
+                        # labels do not have a geometry for instance...
+                        if elt.get("geometry", None)
+                    )
+                ),
             )
-        except AttributeError:
-            logging.warning(
-                f"Invalid geometry with id {json['id_']} (attribute error)"
+            for role, it in itertools.groupby(
+                parsed_keys.values(), key=itemgetter("role")
             )
+        )
+
+        if "outer" not in parts:  # LEBL: Terminal 2
+            msg = f"Invalid geometry with id {json['id_']}: no outer element"
+            _log.warning(msg)
             self.json["geometry"] = self.shape = GeometryCollection()
             return
 
-        if "outer" not in parts:  # LEBL
-            logging.warning(f"Invalid geometry with id {json['id_']}")
-            self.json["geometry"] = self.shape = GeometryCollection()
-            return
+        if isinstance(parts["outer"], ShapelyMPL):
+            parts["outer"] = unary_union(
+                list(Polygon(part) for part in parts["outer"].geoms)
+            )
 
-        if isinstance(parts["outer"], MultiLineString):  # LFPO
+        if isinstance(parts["outer"], MultiLineString):  # LFPO, LFPG
             parts["outer"] = linemerge(parts["outer"])
+            if isinstance(parts["outer"], MultiLineString):  # again, give up...
+                self.json["geometry"] = ShapelyMPL(polygonize(parts["outer"]))
+                self.shape = self.json["geometry"]
+                return
 
         if parts.get("inner", None):
             if isinstance(parts["inner"], MultiLineString):
@@ -83,29 +99,16 @@ class MultiPolygon(Relation):
         )
         try:
             self.shape = Polygon(
-                shell=parts["outer"], holes=parts.get("inner", None)
+                shell=getattr(parts["outer"], "geoms", parts["outer"]),
+                holes=parts.get("inner", None),
             )
             self.json["geometry"] = self.shape
-        except NotImplementedError:
-            logging.warning(msg)
-            try:
-                self.shape = unary_union(
-                    list(Polygon(part) for part in parts["outer"])
-                )
-                self.json["geometry"] = self.shape
-            except ValueError:
-                logging.warning(f"Invalid geometry with id {json['id_']}")
-                self.json["geometry"] = self.shape = GeometryCollection()
 
-        except ValueError:  # YSSY
-            logging.warning(msg)
-            self.shape = Polygon(shell=parts["outer"])
-            self.json["geometry"] = self.shape
-        except Exception:
-            logging.warning(
-                f"Error parsing multigeometry with id {json['id_']}. "
+        except Exception as msg:
+            _log.warning(
+                f"Error parsing multigeometry with id {json['id_']}: {msg} "
             )
-            self.json["geometry"] = GeometryCollection()
+            self.json["geometry"] = self.shape = GeometryCollection()
 
 
 class Building(MultiPolygon):

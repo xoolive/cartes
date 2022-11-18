@@ -39,6 +39,7 @@ from .vega_params import (  # These ones can be unpacked in altair!
 
 # fmt:on
 
+_log = logging.getLogger(__name__)
 
 base_classes: Dict["str", Projection] = {
     "lcc": LambertConformal,
@@ -98,7 +99,7 @@ class EPSGProjectionMeta(ABCMeta):
         )
 
         for key in remove_args:
-            logging.warning(f"argument '{key}' ignored")
+            _log.warning(f"argument '{key}' ignored")
             del all_[key]
 
         return all_
@@ -129,15 +130,15 @@ class EPSGProjectionMeta(ABCMeta):
 
         crs = CRS(identifier)
         basic_dict = crs.to_dict()
-        logging.debug(pprint.pformat(basic_dict))
+        _log.debug(pprint.pformat(basic_dict))
         base_class = base_classes.get(basic_dict["proj"], Projection)
-        logging.debug(f"Generate a class based on {base_class.__name__}")
+        _log.debug(f"Generate a class based on {base_class.__name__}")
 
         transformer = Transformer.from_proj(
             Proj("epsg:4326"), Proj(crs), always_xy=True
         )
         attr_dict = {**crs.to_json_dict(), **attr_dict}
-        logging.debug(f"Based on {pprint.pformat(attr_dict)}")
+        _log.debug(f"Based on {pprint.pformat(attr_dict)}")
 
         if base_class is Projection:
             attr_dict["threshold"] = 1e4
@@ -153,7 +154,7 @@ class EPSGProjectionMeta(ABCMeta):
                 a, rf = basic_dict.get("a", None), basic_dict.get("rf", None)
                 if a is None or rf is None:
                     msg = f"Fallback to regular Projection with {crs.to_dict()}"
-                    logging.warning(msg)
+                    _log.warning(msg)
                     return Projection.__init__(self, crs.to_dict())
                 globe = Globe(semimajor_axis=a, inverse_flattening=rf)
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-import sys
+from functools import cached_property  # noqa: F401
 from pathlib import Path
 from typing import Any, Callable, Dict, Generic, Hashable, TypeVar, Union
 
@@ -12,31 +12,7 @@ from .descriptors import DirectoryCreateIfNotExists
 
 T = TypeVar("T")
 
-
-if sys.version_info >= (3, 8):
-    from functools import cached_property
-else:
-
-    _not_found = object()
-
-    class cached_property(object):
-        """Super simple implementation from functools."""
-
-        def __init__(self, func):
-            self.func = func
-            self.__doc__ = getattr(func, "__doc__")
-
-        def __set_name__(self, owner, name):
-            self.attrname = name
-
-        def __get__(self, instance, cls):
-            if instance is None:
-                return self
-            cache = instance.__dict__
-            val = cache.get(self.attrname, _not_found)
-            if val is _not_found:
-                cache[self.attrname] = val = self.func(instance)
-            return val
+_log = logging.getLogger(__name__)
 
 
 class CacheFunction(Generic[T]):
@@ -84,15 +60,15 @@ class CacheFunction(Generic[T]):
         if res is not None:
             return res
 
-        logging.info(f"Looking for cache file: {cache_file}")
+        _log.info(f"Looking for cache file: {cache_file}")
 
         if cache_file.exists():
-            logging.info(f"Using cache file: {cache_file}")
+            _log.info(f"Using cache file: {cache_file}")
             res = self.reader(cache_file)
 
         if res is None:
             msg = f"Calling function {self.function} with {args, kwargs}"
-            logging.debug(msg)
+            _log.debug(msg)
             res = self.function(*args, **kwargs)
             self.writer(res, cache_file)
 
@@ -134,7 +110,7 @@ class CacheResults(Generic[T]):
 
 
 def write_json(content: Any, cache_file: Path) -> None:
-    logging.info(f"Writing cache file {cache_file}")
+    _log.info(f"Writing cache file {cache_file}")
     directory = cache_file.parent
     if not directory.exists():
         directory.mkdir(parents=True)
@@ -142,12 +118,12 @@ def write_json(content: Any, cache_file: Path) -> None:
 
 
 def read_json(cache_file: Path) -> Any:
-    logging.info(f"Reading cache file {cache_file}")
+    _log.info(f"Reading cache file {cache_file}")
     return json.loads(cache_file.read_text())
 
 
 def write_df_json(df: pd.DataFrame, cache_file: Path) -> None:
-    logging.info(f"Writing cache file {cache_file}")
+    _log.info(f"Writing cache file {cache_file}")
     directory = cache_file.parent
     if not directory.exists():
         directory.mkdir(parents=True)
@@ -155,5 +131,5 @@ def write_df_json(df: pd.DataFrame, cache_file: Path) -> None:
 
 
 def read_json_df(cache_file: Path) -> pd.DataFrame | None:
-    logging.info(f"Reading cache file {cache_file}")
+    _log.info(f"Reading cache file {cache_file}")
     return pd.read_json(cache_file)

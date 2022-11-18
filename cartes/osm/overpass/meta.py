@@ -18,6 +18,8 @@ else:
 
 __all__ = ["features", "taglist"]  # noqa: F822
 
+_log = logging.getLogger(__name__)
+
 
 class TaglistType(TypedDict):
     features: List[str]
@@ -32,12 +34,12 @@ def _hash_request(*args, **kwargs) -> str:
 
 
 def _write_json(json_: JSONType, cache_file) -> None:  # coverage: ignore
-    logging.info(f"Writing cache file {cache_file}")
+    _log.info(f"Writing cache file {cache_file}")
     cache_file.write_text(json.dumps(json_, indent=2))
 
 
 def _read_json(cache_file: Path) -> Optional[JSONType]:
-    logging.info(f"Reading cache file {cache_file}")
+    _log.info(f"Reading cache file {cache_file}")
     json_ = json.loads(cache_file.read_text())
     return json_
 

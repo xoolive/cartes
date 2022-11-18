@@ -8,6 +8,8 @@ from .. import Nominatim
 
 QueryType = Union[bool, int, str, List, Mapping[str, Any]]
 
+_log = logging.getLogger(__name__)
+
 
 class Generator(ABC):
     def __set_name__(self, owner, name):
@@ -19,7 +21,7 @@ class Generator(ABC):
         if elt is None:
             return ""
         if not obj.geometry:
-            logging.info(f"{self.public_name} called with geom={obj.geometry}")
+            _log.info(f"{self.public_name} called with geom={obj.geometry}")
         return self.generate(elt, obj, geom=obj.geometry)
 
     def __set__(self, obj, value):
@@ -115,7 +117,7 @@ class Bounds(Generator):
             west, south, east, north = value
             assert all(isinstance(x, Real) for x in value)
         except Exception as exc:
-            logging.warning(exc)
+            _log.warning(exc)
             raise TypeError(
                 "The bounds attribute must be a shape object or "
                 "a tuple of four float (west, south, east, north)"
@@ -207,7 +209,7 @@ class Query:
         self.date = kwargs.get("date", None)
 
         if not geometry:
-            logging.warn("geometry=False functionality still experimental")
+            _log.warning("geometry=False functionality still experimental")
 
         node = make_querytype(kwargs.get("node", None), "node")
         way = make_querytype(kwargs.get("way", None), "way")

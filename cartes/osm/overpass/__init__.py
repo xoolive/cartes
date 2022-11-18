@@ -2,7 +2,16 @@ import logging
 from concurrent.futures import Future, ProcessPoolExecutor, as_completed
 from functools import lru_cache
 from operator import itemgetter
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    TypedDict,
+)
 
 import geopandas as gpd
 from tqdm.autonotebook import tqdm
@@ -20,6 +29,14 @@ from ...utils.geometry import reorient
 from ..requests import JSONType, json_request
 from .core import NodeWayRelation, to_geometry
 from .query import Query
+
+_log = logging.getLogger(__name__)
+
+
+class Member(TypedDict):
+    ref: int
+    role: str
+    geometry: None | BaseGeometry
 
 
 def hashing_id(*args: Dict[str, int], **kwargs: Dict[str, int]) -> int:
@@ -306,6 +323,7 @@ class Overpass:
 
     @cache_by_id
     def make_relation(self, elt: Dict[str, Any]) -> Dict[str, Any]:
+
         return NodeWayRelation(
             dict(
                 _parent=self,
@@ -317,7 +335,7 @@ class Overpass:
         ).json
 
     @cached_property
-    def all_members(self) -> Dict[int, List[Dict[str, Union[None, int, str]]]]:
+    def all_members(self) -> Dict[int, List[Member]]:
         return dict(
             (
                 elt["id"],
@@ -364,7 +382,7 @@ class Overpass:
                 and by not in kwargs
                 and key not in kwargs
             ):
-                logging.warning(f"{by}={key} not in stylesheet, hence ignored")
+                _log.warning(f"{by}={key} not in stylesheet, hence ignored")
                 continue
             current_style = {
                 **matplotlib_style.get(by, {}),
@@ -384,6 +402,6 @@ class Overpass:
                         )
                     else:
                         msg = f"{key}={cat} not in stylesheet, hence ignored"
-                        logging.warning(msg)
+                        _log.warning(msg)
             else:
                 elt.plot(ax=ax, transform=PlateCarree(), **current_style)
