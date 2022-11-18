@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cartes"
-version = "0.7.2"
+version = "0.7.3"
 description = "A generic toolbox for building maps in Python"
 authors = ["Xavier Olive <git@xoolive.org>"]
 license = "MIT"
@@ -20,10 +20,10 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Visualization",
     "Topic :: Software Development :: Libraries",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Typing :: Typed",
 ]
 
@@ -31,8 +31,8 @@ classifiers = [
 cartes = 'cartes.__main__:main'
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
-numpy = ">=1.21"  # 1.22 is incompatible with Python 3.7
+python = ">=3.8,<4.0"
+numpy = ">=1.21"
 matplotlib = "^3.5"
 scipy = "^1.7"
 pandas = "^1.3"
@@ -78,7 +78,7 @@ Releases = "https://github.com/xoolive/cartes/releases/"
 
 [tool.black]
 line-length = 80
-target_version = ['py37', 'py38', 'py39']
+target_version = ['py38', 'py39', 'py310', 'py311']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -96,7 +96,7 @@ exclude = '''
 # Specify the target platform details in config, so your developers are
 # free to run mypy on Windows, Linux, or macOS and get consistent
 # results.
-python_version = 3.7
+python_version = 3.8
 
 check_untyped_defs = true
 follow_imports = "normal"
