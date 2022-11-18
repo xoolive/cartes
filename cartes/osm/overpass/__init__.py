@@ -36,7 +36,7 @@ _log = logging.getLogger(__name__)
 class Member(TypedDict):
     ref: int
     role: str
-    geometry: None | BaseGeometry
+    geometry: Optional[BaseGeometry]
 
 
 def hashing_id(*args: Dict[str, int], **kwargs: Dict[str, int]) -> int:
