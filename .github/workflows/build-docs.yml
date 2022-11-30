@@ -44,6 +44,8 @@ jobs:
           cmake --build .
           sudo cmake --build . --target install
           cd ../..
+          # https://stackoverflow.com/a/73080089
+          poetry config experimental.new-installer false
           poetry install
 
       - name: Populate cache if need be
