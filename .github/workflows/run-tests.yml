@@ -24,15 +24,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Poetry cache depends on OS, Python version and Poetry version.
-      - name: Cache Poetry cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pypoetry
-          key: poetry-cache-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}
-
-      # virtualenv cache should depends on OS, Python version and `poetry.lock` (and optionally workflow files).
-      - name: Cache Packages
+      # virtualenv cache should depends on OS, Python version and `poetry.lock`
+      - name: Poetry cache
         uses: actions/cache@v3
         with:
           path: |
@@ -47,23 +40,30 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
 
-      - name: Cache folder
+      - name: Cache folder for cartes
         uses: actions/cache@v3
         id: cache-folder
         with:
           path: |
             ~/.cache/cartes/
-          key: ${{ runner.os }}-${{ matrix.python-version }}-cache_cartes
+          key: cartes-${{ runner.os }}
 
       - name: Display Python version
         run: poetry run python -c "import sys; print(sys.version)"
 
-      - name: Install dependencies
+      - name: Ubuntu system dependencies (libboost-dev)
         run: |
           sudo apt update
-          sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
-          # https://stackoverflow.com/a/73080089
-          poetry config experimental.new-installer false
+          # This one refuses to be cached...
+          sudo apt install -y libboost-dev
+
+      - name: Ubuntu system dependencies
+        uses: awalsh128/cache-apt-pkgs-action@v1.2.1
+        with:
+          packages: libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
+
+      - name: Install dependencies
+        run: |
           poetry install
 
       - name: Style checking
