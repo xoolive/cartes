@@ -73,8 +73,8 @@ class GithubAPI:
     async def async_get_features(self) -> pd.DataFrame:
         headers = dict()
         if token := os.getenv("GITHUB_TOKEN") is not None:
-            headers["authorization"] = f"Bearer {token}"
-        async with aiohttp.ClientSession(trust_env=True) as s:
+            headers["authorization"] = f"{token}"
+        async with aiohttp.ClientSession(trust_env=True, headers=headers) as s:
             return await self.async_get_recursive(s)
 
     def get_features(self) -> pd.DataFrame:
