@@ -1,4 +1,4 @@
-name: build
+name: tests
 
 on:
   push:
@@ -60,15 +60,6 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
-          # upgrade to proj>=8.0 for Cartopy 0.20, no longer necessary with ubuntu 22.04
-          # git clone https://github.com/OSGeo/PROJ
-          # cd PROJ
-          # git checkout 8.2.1
-          # mkdir build; cd build
-          # cmake ..
-          # cmake --build .
-          # sudo cmake --build . --target install
-          # cd ../..
           # https://stackoverflow.com/a/73080089
           poetry config experimental.new-installer false
           poetry install

@@ -3,7 +3,7 @@ Altair
 
 
 How to use projections in Altair?
---------------------------------
+---------------------------------
 
 A set of predetermined projection is available in Vega (`documentation
 <https://vega.github.io/vega/docs/projections/>`_, therefore in Altair, but
