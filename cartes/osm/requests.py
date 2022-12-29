@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 import requests
 from appdirs import user_cache_dir
-from tqdm.autonotebook import tqdm
+from tqdm.rich import tqdm
 
 from ..utils.cache import CacheResults
 

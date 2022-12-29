@@ -14,7 +14,7 @@ from typing import (
 )
 
 import geopandas as gpd
-from tqdm.autonotebook import tqdm
+from tqdm.rich import tqdm
 
 import pandas as pd
 from pyproj import Proj
