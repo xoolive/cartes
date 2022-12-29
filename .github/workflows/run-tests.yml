@@ -24,12 +24,34 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # Poetry cache depends on OS, Python version and Poetry version.
+      - name: Cache Poetry cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: poetry-cache-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}
+
+      # virtualenv cache should depends on OS, Python version and `poetry.lock` (and optionally workflow files).
+      - name: Cache Packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.local
+          key: poetry-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}
+
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1.3.3
         with:
           version: ${{ env.POETRY_VERSION }}
           virtualenvs-create: true
           virtualenvs-in-project: true
+
+      - name: Cache folder
+        uses: actions/cache@v3
+        id: cache-folder
+        with:
+          path: |
+            ~/.cache/cartes/
+          key: ${{ runner.os }}-${{ matrix.python-version }}-cache_cartes
 
       - name: Display Python version
         run: poetry run python -c "import sys; print(sys.version)"
@@ -64,6 +86,7 @@ jobs:
       - name: Run tests
         env:
           LD_LIBRARY_PATH: /usr/local/lib
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           poetry run pytest --cov --cov-report term-missing --ignore=cartes/__main__.py
 

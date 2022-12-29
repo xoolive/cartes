@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import re
 import time
 from io import StringIO
@@ -70,6 +71,9 @@ class GithubAPI:
         return pd.concat(df_list)
 
     async def async_get_features(self) -> pd.DataFrame:
+        headers = dict()
+        if token := os.getenv("GITHUB_TOKEN") is not None:
+            headers["authorization"] = f"Bearer {token}"
         async with aiohttp.ClientSession(trust_env=True) as s:
             return await self.async_get_recursive(s)
 

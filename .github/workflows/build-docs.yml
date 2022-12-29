@@ -20,6 +20,20 @@ jobs:
         with:
           python-version: "3.10"
 
+      # Poetry cache depends on OS, Python version and Poetry version.
+      - name: Cache Poetry cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: poetry-cache-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}
+
+      # virtualenv cache should depends on OS, Python version and `poetry.lock` (and optionally workflow files).
+      - name: Cache Packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.local
+          key: poetry-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}
+
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1.3.3
         with:
@@ -56,6 +70,7 @@ jobs:
         if: steps.cache-folder.outputs.cache-hit != 'true'
         env:
           LD_LIBRARY_PATH: /usr/local/lib
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           poetry run python -c "from cartes.atlas import default, world_atlas"
 
