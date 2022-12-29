@@ -36,11 +36,13 @@ More in the [documentation](https://cartes-viz.github.io/gallery.html)
 Latest release:
 
 Recommended, with conda:
-```sh 
+
+```sh
 conda install -c conda-forge cartes
 ```
 
 or with pip:
+
 ```sh
 pip install cartes
 ```
@@ -55,6 +57,6 @@ pip install .
 
 ## Documentation
 
-![docs](https://github.com/xoolive/cartes/actions/workflows/github-pages.yml/badge.svg)
+![docs](https://github.com/xoolive/cartes/workflows/docs/badge.svg)
 
 Documentation available at https://cartes-viz.github.io/
