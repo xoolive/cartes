@@ -35,7 +35,9 @@ jobs:
       - name: Cache Packages
         uses: actions/cache@v3
         with:
-          path: ~/.local
+          path: |
+            ~/.local
+            .venv
           key: poetry-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install and configure Poetry
