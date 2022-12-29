@@ -51,16 +51,10 @@ jobs:
       - name: Display Python version
         run: poetry run python -c "import sys; print(sys.version)"
 
-      - name: Ubuntu system dependencies (libboost-dev)
+      - name: Ubuntu system dependencies
         run: |
           sudo apt update
-          # This one refuses to be cached...
-          sudo apt install -y libboost-dev
-
-      - name: Ubuntu system dependencies
-        uses: awalsh128/cache-apt-pkgs-action@v1.2.1
-        with:
-          packages: libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
+          sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
 
       - name: Install dependencies
         run: |

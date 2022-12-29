@@ -8,6 +8,7 @@ on:
 
 env:
   POETRY_VERSION: "1.3.1"
+  PYTHON_VERSION: "3.10"
 
 jobs:
   deploy:
@@ -18,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: ${{ env.PYTHON_VERSION }}
 
       # virtualenv cache should depends on OS, Python version and `poetry.lock` (and optionally workflow files).
       - name: Poetry Packages
@@ -44,16 +45,10 @@ jobs:
             ~/.cache/cartes/
           key: cartes-${{ runner.os }}
 
-      - name: Ubuntu system dependencies (libboost-dev)
+      - name: Ubuntu system dependencies
         run: |
           sudo apt update
-          # This one refuses to be cached...
-          sudo apt install -y libboost-dev
-
-      - name: Ubuntu system dependencies
-        uses: awalsh128/cache-apt-pkgs-action@v1.2.1
-        with:
-          packages: libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
+          sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
 
       - name: Install dependencies
         run: |
