@@ -51,7 +51,6 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     instances: Dict[int, "NodeWayRelation"] = dict()
 
     def __new__(cls, json: Optional[GeoJSONType] = None):
-
         if json is None:
             return super().__new__(cls)
 
@@ -106,7 +105,6 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         )
 
     def __getattr__(self, name):
-
         if name in ["__getstate__", "__setstate__"]:  # security for pickling
             raise AttributeError(name)
 
@@ -127,7 +125,6 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         resolution: float,
         bounds: Union[None, Tuple[float, float, float, float]] = None,
     ) -> T:
-
         if bounds is None:
             bounds = self.parent.bounds
 

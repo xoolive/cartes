@@ -252,7 +252,6 @@ class Overpass:
         max_workers: Optional[int] = 4,
         **kwargs,
     ) -> "Overpass":
-
         if resolution is None:
             return self
 
@@ -323,7 +322,6 @@ class Overpass:
 
     @cache_by_id
     def make_relation(self, elt: Dict[str, Any]) -> Dict[str, Any]:
-
         return NodeWayRelation(
             dict(
                 _parent=self,

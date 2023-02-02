@@ -55,7 +55,6 @@ class Boundary(Relation):
     """
 
     def __init__(self, json):
-
         super().__init__(json)
 
         self.known_chunks = RelationsDict()
@@ -111,7 +110,6 @@ class Boundary(Relation):
         return self
 
     def _make_geometry(self, parts: RelationsDict):
-
         outer: List[Polygon] = list(polygonize(parts["outer"]))
         inner: List[Polygon] = list(polygonize(parts["inner"]))
 
@@ -161,7 +159,6 @@ class Boundary(Relation):
                 self.known_chunks.include(chunk, role)
 
     def _build_geometry_parts(self) -> BaseGeometry:
-
         all_: Set[int] = set(self.parsed_keys.keys())
 
         for _id, intersection in self.intersections():

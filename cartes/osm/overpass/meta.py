@@ -51,7 +51,6 @@ def _read_json(cache_file: Path) -> Optional[JSONType]:
     writer=_write_json,
 )
 def _feat_tags() -> TaglistType:
-
     c = session.get("https://wiki.openstreetmap.org/wiki/Map_Features")
     c.raise_for_status()
     e = BeautifulSoup(c.content)

@@ -34,7 +34,6 @@ class Waterway(Relation):
     """
 
     def __init__(self, json):
-
         super().__init__(json)
 
         self.parent: Overpass = json["_parent"]

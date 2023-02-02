@@ -49,7 +49,6 @@ class GithubAPI:
         session: aiohttp.ClientSession,
         path: str = "",
     ) -> pd.DataFrame:
-
         async with session.get(self.base_url + path) as resp:
             json = await resp.json()
             if "message" in json:
@@ -113,7 +112,6 @@ class NpmAPI:
         self.id_ = f"{self.name}@{self.latest}"
 
     def get_features(self) -> pd.DataFrame:
-
         c = requests.get(f"{self.api_url}/{self.id_}/flat")
         c.raise_for_status()
         prefix = f"{self.base_url}/{self.id_}/"

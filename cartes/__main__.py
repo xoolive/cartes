@@ -17,7 +17,6 @@ from cartes.utils.features import countries
 )
 @click.option("-v", "--verbose", count=True, help="Verbosity level")
 def main(projection: str, scale: str, verbose: int):
-
     logger = logging.getLogger()
     if verbose == 1:
         logger.setLevel(logging.INFO)
