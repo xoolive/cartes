@@ -23,6 +23,9 @@ def _hash_request(*args, **kwargs) -> str:
     if "timeout" in kwargs:
         del kwargs["timeout"]
 
+    if "get_or_post" in kwargs:
+        del kwargs["get_or_post"]
+
     if "data" in kwargs:  # overpass requests
         query = kwargs["data"].replace("\n", "").replace(" ", "")
         hashcode = hashlib.md5(query.encode("utf-8")).hexdigest()
@@ -63,7 +66,9 @@ def _read_json(cache_file: Path) -> Optional[JSONType]:
     reader=_read_json,
     writer=_write_json,
 )
-def json_request(url: str, timeout: int = 180, **kwargs) -> JSONType:
+def json_request(
+    url: str, timeout: int = 180, get_or_post: str = "post", **kwargs
+) -> JSONType:
     """
     Send a request to the Overpass API and return the JSON response.
     """
@@ -73,7 +78,13 @@ def json_request(url: str, timeout: int = 180, **kwargs) -> JSONType:
     if "data" in new_kwargs:
         new_kwargs["data"] = new_kwargs["data"].encode("utf-8")
 
-    response = session.post(url=url, timeout=timeout, **new_kwargs)
+    if get_or_post == "post":
+        response = session.post(url=url, timeout=timeout, **new_kwargs)
+    elif get_or_post == "get":
+        response = session.get(url=url, timeout=timeout, **new_kwargs)
+    else:
+        msg = "Argument `get_or_post` must be either 'get' or 'post'"
+        raise RuntimeError(msg)
 
     if response.status_code == 504:  # gateway timeout
         msg = f"Got status code {response.status_code}. Trying again soon..."
