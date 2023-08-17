@@ -119,6 +119,20 @@ def test_generate_query() -> None:
     )
 
 
+def test_multipolygon() -> None:
+    airport = Overpass.request(area=dict(iata="AMS"), aeroway=True)
+    assert airport[12472864].shape is not None
+
+    airport = Overpass.request(area=dict(iata="FRA"), aeroway=True)
+    assert airport[5813621].shape is not None
+
+    airport = Overpass.request(area=dict(iata="BCN"), aeroway=True)
+    assert airport[2828130] is not None
+
+    airport = Overpass.request(area=dict(iata="ORY"), aeroway=True)
+    assert airport[9712316] is not None
+
+
 def test_issue_22() -> None:
     # a fix for https://github.com/xoolive/cartes/issues/22
     sh_area = Overpass.request(
