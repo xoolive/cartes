@@ -117,3 +117,12 @@ def test_generate_query() -> None:
         )
         == neste
     )
+
+
+def test_issue_22() -> None:
+    # a fix for https://github.com/xoolive/cartes/issues/22
+    sh_area = Overpass.request(
+        area={"name": "Schleswig-Holstein", "admin_level": 4},
+        rel=dict(boundary="administrative", admin_level=dict(regex="[6-7]")),
+    )
+    assert sh_area[27014].shape is not None

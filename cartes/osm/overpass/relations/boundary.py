@@ -110,8 +110,8 @@ class Boundary(Relation):
         return self
 
     def _make_geometry(self, parts: RelationsDict):
-        outer: List[Polygon] = list(polygonize(parts["outer"]))
-        inner: List[Polygon] = list(polygonize(parts["inner"]))
+        outer: List[Polygon] = list(polygonize((unary_union(parts["outer"]))))
+        inner: List[Polygon] = list(polygonize((unary_union(parts["inner"]))))
 
         if len(outer) == 0:
             return GeometryCollection()
