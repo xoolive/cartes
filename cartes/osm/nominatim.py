@@ -102,6 +102,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
             cls.endpoint.rstrip("/") + "/" + "search",
             timeout=30,
             params=params,
+            get_or_post="get",
             **kwargs,
         )
         if len(json) == 0:
@@ -129,6 +130,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
             cls.endpoint.rstrip("/") + "/" + "reverse",
             timeout=30,
             params=params,
+            get_or_post="get",
             **kwargs,
         )
         if len(json) == 0:
@@ -156,6 +158,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
             cls.endpoint.rstrip("/") + "/" + "lookup",
             timeout=30,
             params=params,
+            get_or_post="get",
             **kwargs,
         )
         if len(json) == 0:
