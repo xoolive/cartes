@@ -5,7 +5,7 @@ from cartopy.feature import NaturalEarthFeature
 # TODO: themes
 
 
-def countries(**kwargs):
+def countries(**kwargs) -> NaturalEarthFeature:
     params = {
         "category": "cultural",
         "name": "admin_0_countries",
@@ -18,7 +18,7 @@ def countries(**kwargs):
     return NaturalEarthFeature(**params)
 
 
-def rivers(**kwargs):
+def rivers(**kwargs) -> NaturalEarthFeature:
     params = {
         "category": "physical",
         "name": "rivers_lake_centerlines",
@@ -31,7 +31,7 @@ def rivers(**kwargs):
     return NaturalEarthFeature(**params)
 
 
-def lakes(**kwargs):
+def lakes(**kwargs) -> NaturalEarthFeature:
     params = {
         "category": "physical",
         "name": "lakes",
@@ -44,7 +44,7 @@ def lakes(**kwargs):
     return NaturalEarthFeature(**params)
 
 
-def ocean(**kwargs):
+def ocean(**kwargs) -> NaturalEarthFeature:
     params = {
         "category": "physical",
         "name": "ocean",
