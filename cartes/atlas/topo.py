@@ -13,10 +13,9 @@ from typing import Any
 import aiohttp
 import altair as alt
 import geopandas as gpd
+import pandas as pd
 import requests
 from appdirs import user_cache_dir
-
-import pandas as pd
 
 from ..osm.requests import session
 from ..utils.cache import (
@@ -36,7 +35,7 @@ class GithubAPI:
 
     def __init__(
         self,
-        username: str = "deldersveld",
+        username: str = "xoolive",
         repository: str = "topojson",
     ) -> None:
         self.base_url = GithubAPI.base_url.format(
