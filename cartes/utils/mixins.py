@@ -1,4 +1,4 @@
-from typing import Iterator, List, Tuple
+from typing import ClassVar, Iterator, List, Tuple
 
 import pandas as pd
 
@@ -27,7 +27,7 @@ class HTMLAttrMixin(HTMLMixin):
     or a property.
     """
 
-    html_attr_list: List[str] = []
+    html_attr_list: ClassVar[List[str]] = []
 
     def _expand_view(self) -> Iterator[Tuple[str, str]]:
         for key in self.html_attr_list:

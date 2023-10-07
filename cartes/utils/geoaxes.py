@@ -42,7 +42,7 @@ def make_polygon(projection, x1, x2, y1, y2):
 def gpd_extent(
     gdf: gpd.GeoDataFrame,
     shape,
-    projection: Projection | None = None,  # noqa: B008
+    projection: Projection | None = None,
     buffer: float = 0.01,
 ) -> BaseGeometry:
     """Computes the intersection of all geometries in a bounding box.

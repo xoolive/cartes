@@ -1,4 +1,4 @@
-from typing import List, Optional, Type, TypeVar, Union
+from typing import ClassVar, List, Optional, Type, TypeVar, Union
 
 from shapely.geometry import mapping, shape
 
@@ -24,7 +24,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     shape = OrientedShape()
 
     endpoint = "https://nominatim.openstreetmap.org/"
-    html_attr_list = [
+    html_attr_list: ClassVar[List[str]] = [
         "osm_type",
         "osm_id",
         "address",
@@ -87,7 +87,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
 
         The request is based on the name passed in parameter.
         >>> Nominatim.search("Toulouse")
-        Nominatim {'place_id': 256863032, 'display_name': 'Toulouse, ...', 'lat': 43.60446, 'lon': 1.44425}
+        Nominatim {..., 'lat': 43.60446, 'lon': 1.44425}
 
         """
         params = dict(
@@ -117,7 +117,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
 
         The request is based on the latlon coordinates of the element.
         >>> Nominatim.reverse(43.608, 1.442)
-        Nominatim {'place_id': 155591309, 'display_name': 'Basilique Saint-Sernin, ...', 'lat': 43.6..., 'lon': 1.44...}
+        Nominatim {..., 'display_name': 'Basilique Saint-Sernin, ...', ...}
         """
 
         params = dict(
@@ -147,7 +147,7 @@ class Nominatim(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         determines the type of the OSM object (N for node, W for way, R for
         relation)
         >>> Nominatim.lookup("R367073")
-        Nominatim {'place_id': 256948794, 'display_name': 'Capitole ...', 'lat': 43.60445, 'lon': 1.44449}
+        Nominatim {..., 'display_name': 'Capitole ...', ...}
         """
         params = dict(
             osm_ids=osm_ids,

@@ -51,11 +51,10 @@ beautifulsoup4 = ">=4.10"
 rich = ">=12.6.0"
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = ">=2.16"
-isort = ">=5.10.1"
+pre-commit = ">=2.13.0"
 black = ">=22.6"
 mypy = ">=0.931"
-flake8 = ">=4.0.1"
+ruff = ">=0.0.247"
 Sphinx = ">=4.3.2"
 sphinx-rtd-theme = ">=1.0.0"
 jupyter-sphinx = ">=0.3.2"
@@ -95,6 +94,22 @@ exclude = '''
 )/
 '''
 
+[tool.ruff]
+select = [
+  "E", "W",  # pycodestyle
+  "F",  # pyflakes
+  "I",  # isort
+  "NPY",  # numpy
+  # "PD",  # pandas
+  "DTZ", # flake8-datetimez
+  "RUF"
+]
+line-length = 80
+target-version = "py38"
+
+[tool.ruff.isort]
+known-first-party = ["numpy", "pandas", "pyproj", "shapely"]
+
 [tool.mypy]
 # Specify the target platform details in config, so your developers are
 # free to run mypy on Windows, Linux, or macOS and get consistent
@@ -108,11 +123,6 @@ strict_optional = true
 warn_no_return = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-
-[tool.isort]
-line_length = 80
-profile = "black"
-known_first_party = ["numpy", "pandas", "pyproj", "shapely"]
 
 [tool.pytest.ini_options]
 addopts = "--log-level=INFO --color=yes --doctest-modules --doctest-report ndiff"

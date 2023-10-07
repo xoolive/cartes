@@ -62,8 +62,7 @@ jobs:
 
       - name: Style checking
         run: |
-          poetry run flake8 cartes
-          poetry run isort --check-only cartes
+          poetry run ruff cartes
           poetry run black --check cartes
 
       - name: Type checking

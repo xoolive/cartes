@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Tuple, TypeVar, Union
+from typing import Any, ClassVar, Dict, Optional, Tuple, TypeVar, Union
 
 from pyproj import Proj, Transformer
 from shapely.geometry import LineString, Point, Polygon, mapping, shape
@@ -47,8 +47,8 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
     """
 
     shape = OrientedShape()
-    subclasses: Dict[str, Any] = dict()
-    instances: Dict[int, "NodeWayRelation"] = dict()
+    subclasses: ClassVar[Dict[str, Any]] = dict()
+    instances: ClassVar[Dict[int, "NodeWayRelation"]] = dict()
 
     def __new__(cls, json: Optional[GeoJSONType] = None):
         if json is None:
@@ -175,7 +175,7 @@ class Relation(NodeWayRelation):
     - json['type'] is the `type` key in the `tags` subdictionary
     """
 
-    subclasses: Dict[str, Any] = dict()
+    subclasses: ClassVar[Dict[str, Any]] = dict()
 
     def __new__(cls, json: Optional[GeoJSONType] = None):
         if json is None:

@@ -13,9 +13,10 @@ from typing import Any
 import aiohttp
 import altair as alt
 import geopandas as gpd
-import pandas as pd
 import requests
 from appdirs import user_cache_dir
+
+import pandas as pd
 
 from ..osm.requests import session
 from ..utils.cache import (
@@ -61,10 +62,15 @@ class GithubAPI:
             self.async_get_recursive(session, elt)
             for elt in df.query('type == "dir"').path
         )
-        df_list = [df] + list(
-            result
-            for result in await asyncio.gather(*futures, return_exceptions=True)
-        )
+        df_list = [
+            df,
+            *list(
+                result
+                for result in await asyncio.gather(
+                    *futures, return_exceptions=True
+                )
+            ),
+        ]
 
         return pd.concat(df_list)
 
