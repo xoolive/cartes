@@ -55,7 +55,7 @@ class CacheFunction(Generic[T]):
     def __call__(self, *args, **kwargs) -> T:
         hashcode = self.hashing(*args, **kwargs)
         cache_file = self.cache_dir / str(hashcode)
-        res = self.lru_cache.get(cache_file.as_posix(), None)  # type: ignore
+        res = self.lru_cache.get(cache_file.as_posix(), None)
 
         if res is not None:
             return res
