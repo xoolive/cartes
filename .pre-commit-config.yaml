@@ -21,12 +21,14 @@ repos:
     hooks:
       - id: sync_with_poetry
         args: [] # optional args
-  - repo: https://github.com/psf/black
-    rev: 23.10.1
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.1.4
     hooks:
-      - id: black
+      - id: ruff
+      - id: ruff-format
+        args: [--check]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.6.1
+    rev: v1.7.1
     hooks:
       - id: mypy
         exclude: ^docs/conf.py

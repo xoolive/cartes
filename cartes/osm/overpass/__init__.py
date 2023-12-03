@@ -152,14 +152,14 @@ class Overpass:
             if x.shape[0] > 0:
                 self._bounds = unary_union(x.geometry).bounds
                 return self._bounds
-        self._bounds = tuple(  # type: ignore
+        self._bounds = tuple(
             eval(key[:3])(
                 (x["bounds"] for x in self.json["elements"] if "bounds" in x),
                 key=itemgetter(key),
             )[key]
             for key in ["minlon", "minlat", "maxlon", "maxlat"]
         )
-        return self._bounds  # type: ignore
+        return self._bounds
 
     @property
     def extent(self) -> Tuple[float, float, float, float]:

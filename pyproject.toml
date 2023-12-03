@@ -52,7 +52,6 @@ rich = ">=12.6.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = ">=2.13.0"
-black = ">=22.6"
 mypy = ">=0.931"
 ruff = ">=0.0.247"
 Sphinx = ">=4.3.2"

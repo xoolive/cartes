@@ -30,7 +30,8 @@ def valid_crs(area: Union[str, GeoObject]) -> pd.DataFrame:
             {
                 "area": crsinfo.area_of_use.name  # type: ignore
                 # typing: explain (the hasattr catches it)
-                if hasattr(crsinfo, "area_of_use") else None,
+                if hasattr(crsinfo, "area_of_use")
+                else None,
                 **dict((col, getattr(crsinfo, col)) for col in features),
             }
             for crsinfo in pyproj.database.query_crs_info(
