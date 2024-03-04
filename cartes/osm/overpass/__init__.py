@@ -66,13 +66,17 @@ class OverpassDataDescriptor(Descriptor[gpd.GeoDataFrame]):
                 if col in data.columns:
                     data = data.drop(columns=col)
             setattr(obj, self.private_name, data)
+
+        if "geometry" in data.columns:
+            data = data.set_geometry("geometry")
         if "latitude" in data.columns:
             x = data.query("latitude != latitude")
         else:
             x = data.assign(latitude=None, longitude=None)
 
         if x.shape[0] > 0 and "geometry" in x.columns:
-            x = x.query("geometry == geometry and not geometry.is_empty")
+            x = x.query("geometry.notnull()")
+            x = x.loc[~x.is_empty]
             if x.shape[0] > 0:
                 data.loc[x.index, ["latitude", "longitude"]] = x.assign(
                     longitude=lambda df: df.geometry.centroid.x,
