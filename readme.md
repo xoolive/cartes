@@ -2,14 +2,14 @@
 
 ![build](https://github.com/xoolive/cartes/workflows/build/badge.svg)
 ![docs](https://github.com/xoolive/cartes/workflows/docs/badge.svg)
-[![Code Coverage](https://img.shields.io/codecov/c/github/xoolive/cartes.svg)](https://codecov.io/gh/xoolive/cartes)
-[![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue.svg)](https://mypy.readthedocs.io/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/psf/black)
+![Code Coverage](https://img.shields.io/codecov/c/github/xoolive/cartes.svg)
+![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue.svg)
+![Code style: black](https://img.shields.io/badge/code%20style-black-black.svg)
 ![License](https://img.shields.io/pypi/l/cartes.svg)\
 ![PyPI version](https://img.shields.io/pypi/v/cartes)
-[![PyPI downloads](https://img.shields.io/pypi/dm/cartes)](https://pypi.org/project/cartes)
+![PyPI downloads](https://img.shields.io/pypi/dm/cartes)
 ![Conda version](https://img.shields.io/conda/vn/conda-forge/cartes)
-[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/cartes.svg)](https://anaconda.org/conda-forge/cartes)
+![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/cartes.svg)
 
 Cartes is a Python library providing facilities to produce meaningful maps.
 
@@ -24,10 +24,10 @@ The cartes library is a powerful asset to **publish clean, lightweight geographi
 
 ## Gallery
 
-<a href="https://cartes-viz.github.io/gallery/mercantour.html"><img width="20%" src="https://cartes-viz.github.io/_static/homepage/mercantour.png"></a>
-<a href="https://cartes-viz.github.io/gallery/footprint.html"><img width="20%" src="https://cartes-viz.github.io/_static/homepage/antibes.png"></a>
-<a href="https://cartes-viz.github.io/gallery/airports.html"><img width="20%" src="https://cartes-viz.github.io/_static/homepage/airports.png"></a>
-<a href="https://cartes-viz.github.io/gallery/tokyo_metro.html#zoom-in-to-downtown-tokyo"><img width="20%" src="https://cartes-viz.github.io/_static/homepage/tokyo.png"></a>
+<a href="https://cartes-viz.github.io/gallery/mercantour.html"><img width="20%" src="https://cartes-viz.github.io/\_static/homepage/mercantour.png"></a>
+<a href="https://cartes-viz.github.io/gallery/footprint.html"><img width="20%" src="https://cartes-viz.github.io/\_static/homepage/antibes.png"></a>
+<a href="https://cartes-viz.github.io/gallery/airports.html"><img width="20%" src="https://cartes-viz.github.io/\_static/homepage/airports.png"></a>
+<a href="https://cartes-viz.github.io/gallery/tokyo_metro.html#zoom-in-to-downtown-tokyo"><img width="20%" src="https://cartes-viz.github.io/\_static/homepage/tokyo.png"></a>
 
 More in the [documentation](https://cartes-viz.github.io/gallery.html)
 
