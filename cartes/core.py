@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC, abstractproperty
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Iterator, Tuple
 
 from cartopy.crs import Orthographic
@@ -15,7 +15,8 @@ if TYPE_CHECKING:
 
 
 class GeoObject(ABC):
-    @abstractproperty
+    @property
+    @abstractmethod
     def __geo_interface__(self):
         return 0
 

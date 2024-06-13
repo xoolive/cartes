@@ -1,6 +1,7 @@
 import hashlib
 import json
 import logging
+import os
 import time
 from io import BytesIO
 from pathlib import Path
@@ -61,7 +62,10 @@ def _read_json(cache_file: Path) -> Optional[JSONType]:
 
 
 @CacheResults(
-    cache_dir=Path(user_cache_dir("cartes")) / "osm",
+    cache_dir=os.environ.get(
+        "CARTES_CACHE",
+        default=Path(user_cache_dir("cartes")) / "osm",
+    ),
     hashing=_hash_request,
     reader=_read_json,
     writer=_write_json,
@@ -85,6 +89,10 @@ def json_request(
     else:
         msg = "Argument `get_or_post` must be either 'get' or 'post'"
         raise RuntimeError(msg)
+
+    if response.status_code == 403:  # forbidden for url
+        msg = "Error 403: IP address may be blocked"
+        _log.warning(msg)
 
     if response.status_code == 504:  # gateway timeout
         msg = f"Got status code {response.status_code}. Trying again soon..."
