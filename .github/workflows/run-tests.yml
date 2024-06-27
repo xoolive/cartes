@@ -74,6 +74,11 @@ jobs:
           LD_LIBRARY_PATH: /usr/local/lib
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          poetry run pytest --cov --cov-report term-missing --ignore=cartes/__main__.py
+          poetry run pytest --cov --cov-report xml
 
-      - uses: codecov/codecov-action@v4
+      - name: Upload coverage to Codecov
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          env_vars: PYTHON_VERSION
