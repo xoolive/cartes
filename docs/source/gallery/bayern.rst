@@ -41,7 +41,7 @@ Data preprocessing
 Simplify the borders for all districts and assign colours so that no two neighbouring districts get the same colour.
 
 .. code:: python
-    
+
     # 1st step: simplify the borders
     # 2nd step: assign a color using graph coloring
     bayern = bayern.simplify(5e3).coloring()
@@ -99,15 +99,15 @@ The following code gets all the necessary complementary information:
 
     import aiohttp
     import bs4  # beautifulsoup4
-    
-    async def fetch(wikidata, session):
+
+    async def fetch(wikidata, client):
         result = dict()
-    
-        async with session.get(
+
+        r = await client.get(
             f"https://www.wikidata.org/wiki/Special:EntityData/{wikidata}.json"
-        ) as resp:
-            json = await resp.json()
-    
+        )
+        json = r.json()
+
         # The licence plate code
         p395 = [
             elt["mainsnak"]["datavalue"]["value"]
@@ -116,31 +116,31 @@ The following code gets all the necessary complementary information:
         # Some districts have several official licence plate codes
         # Then the second looks more natural if we have to pick one
         result["P395"] = p395[0] if len(p395) == 1 else p395[1]
-    
+
         # The name of the SVG file for the coat of arms
         p94 = next(
             elt["mainsnak"]["datavalue"]["value"]
             for elt in json["entities"][wikidata]["claims"]["P94"]
         )
-    
+
         # The full path to the SVG file is to be found on that page
-        async with session.get(f"https://commons.wikimedia.org/wiki/File:{p94}") as resp:
-            page = bs4.BeautifulSoup(await resp.text())
-            svg_link = page.find("a", href=re.compile("https://.*\.svg$"))
-            if svg_link is not None:
-                result["P94"] = svg_link.attrs["href"]
-    
+        r = await client.get(f"https://commons.wikimedia.org/wiki/File:{p94}")
+        page = bs4.BeautifulSoup(await r.text())
+        svg_link = page.find("a", href=re.compile("https://.*\.svg$"))
+        if svg_link is not None:
+            result["P94"] = svg_link.attrs["href"]
+
         return result
-    
-    
+
+
     async def wikidata():
-        async with aiohttp.ClientSession() as session:
+        async with httpx.AsyncClient() as client:
             futures = list(
-                fetch(elt.wikidata, session) for _, elt in bayern.data.iterrows()
+                fetch(elt.wikidata, client) for _, elt in bayern.data.iterrows()
             )
             return list(result for result in await asyncio.gather(*futures))
-    
-    
+
+
     records = await wikidata()  # only valid in notebooks, otherwise asyncio.run(main())
 
     bayern_complete = bayern.data.merge(

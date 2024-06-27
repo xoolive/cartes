@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  POETRY_VERSION: "1.6.1"
+  POETRY_VERSION: "1.8.2"
   PYTHON_VERSION: "3.10"
 
 jobs:
@@ -58,10 +58,8 @@ jobs:
         env:
           LD_LIBRARY_PATH: /usr/local/lib
         run: |
-          # until altair 4.3 is released
-          poetry run pip install git+https://github.com/altair-viz/altair.git
           # reuse the same cache folder as tests
-          cd docs && CARTES_CACHE=../cartes/tests/cache poetry run make html
+          cd docs && CARTES_CACHE=../tests/cache poetry run make html
 
       - name: Deploy pages
         uses: peaceiris/actions-gh-pages@v4

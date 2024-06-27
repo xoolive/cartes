@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  POETRY_VERSION: "1.6.1"
+  POETRY_VERSION: "1.8.2"
 
 jobs:
   deploy:
@@ -62,12 +62,12 @@ jobs:
 
       - name: Style checking
         run: |
-          poetry run ruff check cartes
-          poetry run ruff format --check cartes
+          poetry run ruff check src tests
+          poetry run ruff format --check src tests
 
       - name: Type checking
         run: |
-          poetry run mypy cartes
+          poetry run mypy src tests
 
       - name: Run tests
         env:

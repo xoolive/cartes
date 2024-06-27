@@ -1,0 +1,37 @@
+{
+  "place_id": 376653361,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 2966633017,
+  "lat": "43.608867",
+  "lon": "1.4416748",
+  "category": "amenity",
+  "type": "cafe",
+  "place_rank": 30,
+  "importance": 9.99999999995449e-6,
+  "addresstype": "amenity",
+  "name": "La fianc\u00e9e",
+  "display_name": "La fianc\u00e9e, 9, Place Saint-Sernin, Place Occitane, Capitole, Toulouse Centre, Toulouse, Haute-Garonne, Occitania, Metropolitan France, 31000, France",
+  "address": {
+    "amenity": "La fianc\u00e9e",
+    "house_number": "9",
+    "road": "Place Saint-Sernin",
+    "neighbourhood": "Place Occitane",
+    "suburb": "Toulouse Centre",
+    "city": "Toulouse",
+    "municipality": "Toulouse",
+    "county": "Haute-Garonne",
+    "ISO3166-2-lvl6": "FR-31",
+    "state": "Occitania",
+    "ISO3166-2-lvl4": "FR-OCC",
+    "region": "Metropolitan France",
+    "postcode": "31000",
+    "country": "France",
+    "country_code": "fr"
+  },
+  "boundingbox": ["43.6088170", "43.6089170", "1.4416248", "1.4417248"],
+  "geojson": {
+    "type": "Point",
+    "coordinates": [1.4416748, 43.608867]
+  }
+}

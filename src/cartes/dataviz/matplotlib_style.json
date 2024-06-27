@@ -1,0 +1,78 @@
+{
+  "aerodrome": { "color": "None" },
+  "control_center": {
+    "linewidth": 2,
+    "color": "0.3",
+    "edgecolor": "0.6",
+    "zorder": 0,
+    "markersize": 1000,
+    "marker": "atc_tower"
+  },
+  "control_tower": {
+    "linewidth": 2,
+    "color": "0.3",
+    "edgecolor": "0.3",
+    "zorder": 0,
+    "markersize": 1000,
+    "marker": "atc_tower"
+  },
+  "tower": {
+    "linewidth": 2,
+    "color": "0.3",
+    "edgecolor": "0.3",
+    "zorder": 0,
+    "markersize": 1000,
+    "marker": "atc_tower"
+  },
+  "terminal": {
+    "linewidth": 1,
+    "color": "0.3",
+    "edgecolor": "0.3",
+    "zorder": 0
+  },
+  "hangar": { "color": "0.2", "edgecolor": "0.2", "zorder": 0 },
+  "gate": { "color": "C5", "zorder": 2, "markersize": 10 },
+  "jet_bridge": { "color": "C5", "zorder": 2, "markersize": 10 },
+  "aerobridge": { "color": "C5", "zorder": 2, "markersize": 10 },
+  "parking_position": {
+    "color": "0.6",
+    "linewidth": 1.5,
+    "zorder": 1,
+    "markersize": 5
+  },
+  "taxiway": { "color": "0.5", "linewidth": 1.5, "zorder": 1 },
+  "taxilane": { "color": "0.5", "linewidth": 1.5, "zorder": 1 },
+  "stopway": { "color": "0.5", "linewidth": 1.5, "zorder": 1 },
+  "holding_position": {
+    "color": "0.5",
+    "linewidth": 1.5,
+    "zorder": 1,
+    "markersize": 5
+  },
+  "runway": { "color": "0.3", "linewidth": 5, "zorder": 2 },
+  "threshold": { "color": "0.3", "zorder": 2, "markersize": 10 },
+  "displaced_threshold": { "color": "0.3", "zorder": 2, "markersize": 10 },
+  "helipad": {
+    "color": "0.3",
+    "linewidth": 1,
+    "zorder": 2,
+    "markersize": 1500,
+    "marker": "helicopter"
+  },
+  "apron": { "color": "0.9", "edgecolor": "1.0", "linewidth": 1, "zorder": -2 },
+  "windsock": {
+    "color": "0.6",
+    "markersize": 1000,
+    "marker": "windsock"
+  },
+  "navigationaid": {
+    "papi": { "color": "C3", "marker": "o", "markersize": 10 },
+    "glidepath": { "color": "C3", "marker": "|" },
+    "approach_light": { "color": "C3", "marker": "+" },
+    "key": "navigationaid"
+  },
+  "construction": { "linestyle": "dashed", "color": "0.8" },
+  "proposed": { "linestyle": "dashed", "color": "0.9" },
+  "marking": { "color": "0.8", "linewidth": 0.2 },
+  "building": { "color": "0.2" }
+}
