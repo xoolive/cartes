@@ -1,6 +1,6 @@
 # Cartes
 
-![build](https://github.com/xoolive/cartes/workflows/build/badge.svg)
+![tests](https://github.com/xoolive/cartes/workflows/tests/badge.svg)
 ![docs](https://github.com/xoolive/cartes/workflows/docs/badge.svg)
 ![Code Coverage](https://img.shields.io/codecov/c/github/xoolive/cartes.svg)
 ![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue.svg)
@@ -24,10 +24,10 @@ The cartes library is a powerful asset to **publish clean, lightweight geographi
 
 ## Gallery
 
-<a href="https://cartes-viz.github.io/gallery/mercantour.html"><img width="20%" src="https://cartes-viz.github.io/\_static/homepage/mercantour.png"></a>
-<a href="https://cartes-viz.github.io/gallery/footprint.html"><img width="20%" src="https://cartes-viz.github.io/\_static/homepage/antibes.png"></a>
-<a href="https://cartes-viz.github.io/gallery/airports.html"><img width="20%" src="https://cartes-viz.github.io/\_static/homepage/airports.png"></a>
-<a href="https://cartes-viz.github.io/gallery/tokyo_metro.html#zoom-in-to-downtown-tokyo"><img width="20%" src="https://cartes-viz.github.io/\_static/homepage/tokyo.png"></a>
+<a href="https://cartes-viz.github.io/gallery/mercantour.html"><img width="20%" src="https://cartes-viz.github.io/_static/homepage/mercantour.png"></a>
+<a href="https://cartes-viz.github.io/gallery/footprint.html"><img width="20%" src="https://cartes-viz.github.io/_static/homepage/antibes.png"></a>
+<a href="https://cartes-viz.github.io/gallery/airports.html"><img width="20%" src="https://cartes-viz.github.io/_static/homepage/airports.png"></a>
+<a href="https://cartes-viz.github.io/gallery/tokyo_metro.html#zoom-in-to-downtown-tokyo"><img width="20%" src="https://cartes-viz.github.io/_static/homepage/tokyo.png"></a>
 
 More in the [documentation](https://cartes-viz.github.io/gallery.html)
 
