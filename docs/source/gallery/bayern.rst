@@ -86,7 +86,7 @@ Coats of arms
 
 The first map shows one main issue: only `Landkreis` display a license plate code, not cities outside a `Kreis` (`Kreisfreie Stadt`).
 
-Since the data returned by OpenStreetMap contains a Wikidata identifier, we use it to fill the missing information. Since the whole process involves many small downloads which can be run in parallel, we use in the following example the asynchronous library ``aiohttp`` rather than the popular "blocking" ``requests`` library.
+Since the data returned by OpenStreetMap contains a Wikidata identifier, we use it to fill the missing information.  Since the whole process involves many small downloads which can be run in parallel, we use the async framework for that.
 
 Wikidata returns comprehensive information in JSON format, with popular fields encoded with identifiers. We focus here on:
 
