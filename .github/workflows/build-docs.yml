@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 env:
-  POETRY_VERSION: "1.8.2"
   PYTHON_VERSION: "3.10"
 
 jobs:
@@ -16,35 +15,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      # virtualenv cache should depends on OS, Python version and `poetry.lock` (and optionally workflow files).
-      - name: Poetry Packages
+      - name: Cache folder for cartes
         uses: actions/cache@v4
+        id: cache-folder
         with:
           path: |
-            ~/.local
-            .venv
-          key: poetry-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install and configure Poetry
-        uses: snok/install-poetry@v1.4.1
-        with:
-          version: ${{ env.POETRY_VERSION }}
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+            ~/.cache/cartes/
+          key: cartes-${{ runner.os }}
 
       - name: Ubuntu system dependencies
         run: |
           sudo apt update
           sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
 
-      - name: Install dependencies
-        run: |
-          poetry install
+      - name: Install the project
+        run: uv sync --all-extras --dev
 
       - name: Populate cache if need be
         if: steps.cache-folder.outputs.cache-hit != 'true'
@@ -52,14 +47,14 @@ jobs:
           LD_LIBRARY_PATH: /usr/local/lib
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          poetry run python -c "from cartes.atlas import default, world_atlas"
+          uv run python -c "from cartes.atlas import default, world_atlas"
 
       - name: Build pages
         env:
           LD_LIBRARY_PATH: /usr/local/lib
         run: |
           # reuse the same cache folder as tests
-          cd docs && CARTES_CACHE=../tests/cache poetry run make html
+          cd docs && CARTES_CACHE=../tests/cache uv run make html
 
       - name: Deploy pages
         uses: peaceiris/actions-gh-pages@v4

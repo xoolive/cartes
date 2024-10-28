@@ -6,39 +6,25 @@ on:
       - master
   workflow_dispatch:
 
-env:
-  POETRY_VERSION: "1.8.2"
-
 jobs:
   deploy:
     runs-on: ubuntu-latest # ${{ matrix.os }}
     strategy:
       matrix:
         # os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
-      # virtualenv cache should depends on OS, Python version and `poetry.lock`
-      - name: Poetry cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.local
-            .venv
-          key: poetry-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install and configure Poetry
-        uses: snok/install-poetry@v1.4.1
-        with:
-          version: ${{ env.POETRY_VERSION }}
-          virtualenvs-create: true
-          virtualenvs-in-project: true
 
       - name: Cache folder for cartes
         uses: actions/cache@v4
@@ -49,32 +35,31 @@ jobs:
           key: cartes-${{ runner.os }}
 
       - name: Display Python version
-        run: poetry run python -c "import sys; print(sys.version)"
+        run: uv run python -c "import sys; print(sys.version)"
 
       - name: Ubuntu system dependencies
         run: |
           sudo apt update
           sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
 
-      - name: Install dependencies
-        run: |
-          poetry install
+      - name: Install the project
+        run: uv sync --all-extras --dev
 
       - name: Style checking
         run: |
-          poetry run ruff check src tests
-          poetry run ruff format --check src tests
+          uv run ruff check src tests
+          uv run ruff format --check src tests
 
       - name: Type checking
         run: |
-          poetry run mypy src tests
+          uv run mypy src tests
 
       - name: Run tests
         env:
           LD_LIBRARY_PATH: /usr/local/lib
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          poetry run pytest --cov --cov-report xml
+          uv run pytest --cov --cov-report xml
 
       - name: Upload coverage to Codecov
         if: ${{ github.event_name != 'pull_request_target' }}
