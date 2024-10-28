@@ -5,7 +5,7 @@ description = "A generic toolbox for building maps in Python"
 authors = [{ name = "Xavier Olive", email = "git@xoolive.org" }]
 license = "MIT"
 readme = "readme.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Information Technology",
@@ -25,7 +25,8 @@ dependencies = [
   "altair>=5.4.1",
   "appdirs>=1.4.4",
   "beautifulsoup4>=4.12.3",
-  "cartopy>=0.23.0",
+  "cartopy>=0.23.0; python_version<'3.10'",
+  "cartopy>=0.24.1; python_version>='3.10'",
   "fastapi>=0.115.0",
   "geopandas>=1.0.1",
   "httpx[http2]>=0.27.2",
@@ -33,11 +34,13 @@ dependencies = [
   "lxml>=5.3.0",
   "matplotlib>=3.9.2",
   "nest-asyncio>=1.6.0",
-  "numpy>=2.0.2",
+  "numpy>=2.0.2; python_version<'3.10'",
+  "numpy>=2.1.2; python_version>='3.10'",
   "pandas>=2.2.3",
   "pyproj<3.7.1; python_version<'3.10'",
   "pyproj>=3.7.0; python_version>='3.10'",
-  "scipy>=1.13.1",
+  "scipy>=1.13.1; python_version<'3.10'",
+  "scipy>=1.14.1; python_version>='3.10'",
   "shapely>=2.0.6",
   "tqdm>=4.66.5",
   "uvicorn>=0.31.0",
@@ -64,8 +67,8 @@ dev-dependencies = [
   "pytest>=8.3.3",
   "pytest-cov>=5.0.0",
   "ruff>=0.6.8",
-  "sphinx>=7.4.7",
-  "sphinx-rtd-theme>=2.0.0",
+  "sphinx>=7.4.7; python_version>'3.11'",
+  "sphinx-rtd-theme>=2.0.0; python_version>'3.11'",
   "vega-datasets>=0.9.0",
   "exceptiongroup>=1.2.2;python_version<'3.11'",
 ]

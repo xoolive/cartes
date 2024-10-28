@@ -12,7 +12,12 @@ jobs:
     strategy:
       matrix:
         # os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version:
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
     steps:
       - uses: actions/checkout@v4
 
@@ -59,7 +64,7 @@ jobs:
           LD_LIBRARY_PATH: /usr/local/lib
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          uv run pytest --cov --cov-report xml
+          uv run pytest tests --cov --cov-report xml
 
       - name: Upload coverage to Codecov
         if: ${{ github.event_name != 'pull_request_target' }}
