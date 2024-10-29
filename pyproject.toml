@@ -73,9 +73,6 @@ dev-dependencies = [
   "exceptiongroup>=1.2.2;python_version<'3.11'",
 ]
 
-[tool.hatch.build.targets.sdist]
-include = ["license.txt", "py.typed", "*.json"]
-
 [tool.ruff]
 lint.select = [
   "E",
