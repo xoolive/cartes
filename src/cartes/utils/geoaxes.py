@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import geopandas as gpd
 from cartopy.crs import Projection
 from cartopy.img_transform import mesh_projection
@@ -18,14 +20,14 @@ from ..utils.geometry import fix_geodataframe
 # We patch the set_extent method to use GeoObjects instead.
 
 
-def _set_extent(self, shape, buffer: float = 0.01):
+def _set_extent(self, shape, crs: None | Any = None, buffer: float = 0.01):
     if isinstance(shape, str):
         shape = Nominatim.search(shape)
     if isinstance(shape, GeoObject):
         x1, x2, y1, y2 = shape.extent
         extent = (x1 - buffer, x2 + buffer, y1 - buffer, y2 + buffer)
-        return self._set_extent(extent)
-    self._set_extent(shape)
+        return self._set_extent(extent, crs=crs)
+    return self._set_extent(shape, crs=crs)
 
 
 GeoAxesSubplot._set_extent = GeoAxesSubplot.set_extent

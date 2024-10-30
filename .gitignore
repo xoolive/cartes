@@ -17,9 +17,5 @@ __pycache__/
 build/
 dist/
 
-bibliography/
-sandbox/
-stubs/
 docs/*.ipynb
-
 docs/matplotlib.get_configdir/
