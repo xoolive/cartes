@@ -1,20 +1,14 @@
 import json
 import logging
 import re
-import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
 
 from appdirs import user_cache_dir
 from bs4 import BeautifulSoup
 
 from ...utils.cache import CacheResults
 from ..requests import client
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
-else:
-    from typing_extensions import TypedDict
 
 __all__ = ["features", "taglist"]  # noqa: F822
 
