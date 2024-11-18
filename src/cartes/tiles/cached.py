@@ -26,12 +26,12 @@ if not global_cache_dir.is_dir():
 class Cache(object):
     extension = ".jpg"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, max_connections=10, *args, **kwargs):
         self.params = {}
-
         tileset_name = "{}".format(self.__class__.__name__.lower())
 
         self.cache_directory = global_cache_dir / tileset_name
+        self.semaphore = asyncio.Semaphore(max_connections)
 
         if "style" in kwargs:
             self.cache_directory /= kwargs["style"]
@@ -51,10 +51,11 @@ class Cache(object):
         )
 
         if not os.path.exists(tile_fname):
-            response = await async_client.get(
-                self._image_url(tile),  # type: ignore
-                headers={"User-Agent": f"cartes {__version__}"},
-            )
+            async with self.semaphore:
+                response = await async_client.get(
+                    self._image_url(tile),  # type: ignore
+                    headers={"User-Agent": f"cartes {__version__}"},
+                )
             response.raise_for_status()
             tile_fname.write_bytes(response.content)
 
