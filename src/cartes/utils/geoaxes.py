@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 import geopandas as gpd
-from cartopy.crs import Projection
+from cartopy.crs import PlateCarree, Projection
 from cartopy.img_transform import mesh_projection
 from cartopy.mpl.geoaxes import GeoAxesSubplot
 
@@ -30,8 +30,41 @@ def _set_extent(self, shape, crs: None | Any = None, buffer: float = 0.01):
     return self._set_extent(shape, crs=crs)
 
 
+def set_square_ratio(self, crs: None | Any = None) -> None:
+    if crs is None:
+        crs = PlateCarree()
+    bbox = self.get_extent(crs=crs)
+    lon_range = bbox[1] - bbox[0]
+    lat_range = bbox[3] - bbox[2]
+    aspect_ratio = lon_range / lat_range
+
+    # Adjust the extent to make the aspect ratio 1:1
+    if aspect_ratio > 1:
+        center_lat = (bbox[3] + bbox[2]) / 2
+        lat_range = lon_range
+        new_extent = [
+            bbox[0],
+            bbox[1],
+            center_lat - lat_range / 2,
+            center_lat + lat_range / 2,
+        ]
+    else:
+        center_lon = (bbox[1] + bbox[0]) / 2
+        lon_range = lat_range
+        new_extent = [
+            center_lon - lon_range / 2,
+            center_lon + lon_range / 2,
+            bbox[2],
+            bbox[3],
+        ]
+
+    # Set the new extent to achieve a 1:1 aspect ratio
+    self.set_extent(new_extent, crs)
+
+
 GeoAxesSubplot._set_extent = GeoAxesSubplot.set_extent
 GeoAxesSubplot.set_extent = _set_extent
+GeoAxesSubplot.set_square_ratio = set_square_ratio
 
 
 def make_polygon(projection, x1, x2, y1, y2):
