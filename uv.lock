@@ -131,7 +131,7 @@ wheels = [
 
 [[package]]
 name = "cartes"
-version = "0.8.2"
+version = "0.8.3"
 source = { editable = "." }
 dependencies = [
     { name = "altair" },
@@ -179,7 +179,7 @@ requires-dist = [
     { name = "appdirs", specifier = ">=1.4.4" },
     { name = "beautifulsoup4", specifier = ">=4.12.3" },
     { name = "cartopy", marker = "python_full_version < '3.10'", specifier = ">=0.23.0" },
-    { name = "cartopy", marker = "python_full_version >= '3.10'", specifier = ">=0.24.1" },
+    { name = "cartopy", marker = "python_full_version >= '3.10'", specifier = ">=0.24.0" },
     { name = "fastapi", specifier = ">=0.115.0" },
     { name = "geopandas", specifier = ">=1.0.1" },
     { name = "httpx", extras = ["http2"], specifier = ">=0.27.2" },
