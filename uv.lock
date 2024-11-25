@@ -159,7 +159,7 @@ dependencies = [
     { name = "uvicorn" },
 ]
 
-[package.dev-dependencies]
+[package.dependency-groups]
 dev = [
     { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
     { name = "jupyter-sphinx" },
@@ -200,7 +200,7 @@ requires-dist = [
     { name = "uvicorn", specifier = ">=0.31.0" },
 ]
 
-[package.metadata.requires-dev]
+[package.metadata.dependency-groups]
 dev = [
     { name = "exceptiongroup", marker = "python_full_version < '3.11'", specifier = ">=1.2.2" },
     { name = "jupyter-sphinx", specifier = ">=0.5.3" },
