@@ -35,7 +35,7 @@ More in the [documentation](https://cartes-viz.github.io/gallery.html)
 
 Latest release:
 
-Recommended, with conda:
+Recommended for beginners, with conda:
 
 ```sh
 conda install -c conda-forge cartes
@@ -47,12 +47,12 @@ or with pip:
 pip install cartes
 ```
 
-Development version:
+Development version, with uv:
 
 ```sh
 git clone https://github.com/xoolive/cartes
 cd cartes
-pip install .
+uv sync --dev
 ```
 
 ## Documentation
