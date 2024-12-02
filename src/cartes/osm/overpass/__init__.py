@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from concurrent.futures import Future, ProcessPoolExecutor, as_completed
 from functools import lru_cache
@@ -14,6 +16,7 @@ from typing import (
 )
 
 import geopandas as gpd
+import networkx as nx
 from tqdm import tqdm
 
 import pandas as pd
@@ -237,8 +240,6 @@ class Overpass:
         )
 
     def coloring(self) -> "Overpass":
-        import networkx as nx
-
         self.graph = nx.Graph()
         for elt in self:
             for neighbour in elt.neighbours:
@@ -249,6 +250,35 @@ class Overpass:
         )
         merge.graph = self.graph
         return merge
+
+    def network_graph(
+        self, *args: str, query_str: None | str = None
+    ) -> nx.Graph:
+        """Nice to have at least "geometry" as one of the args."""
+        graph = nx.Graph()
+        positions = {}
+        df = self.parse().query('type_ == "way"')
+        if query_str is not None:
+            df = df.query(query_str)
+
+        for _, e in df.iterrows():
+            if e.geometry.geom_type == "LineString":
+                first, *_, last = e.nodes
+                first_pos, *_, last_pos = e["geometry"].coords
+                positions[first] = first_pos
+                positions[last] = last_pos
+
+                # add any extra information to the edges
+                kwargs = dict((arg, e.get(arg, None)) for arg in args)
+                kwargs["first"] = first
+                kwargs["last"] = last
+                graph.add_edge(first, last, **kwargs)
+
+                # it is more comfortable to have the positions attached to nodes
+                graph.nodes[first]["pos"] = first_pos
+                graph.nodes[last]["pos"] = last_pos
+
+        return graph
 
     def simplify(
         self,
