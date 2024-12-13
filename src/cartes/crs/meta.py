@@ -83,7 +83,10 @@ arg_codes = {
 
 class EPSGProjectionMeta(ABCMeta):
     @staticmethod
-    def init_args(parameters: List[Dict[str, Any]], proj: Projection):
+    def init_args(
+        parameters: List[Dict[str, Any]],
+        proj: Projection,
+    ) -> Dict[str, Any]:
         all_ = dict(
             (arg_codes[elt["id"]["code"]], elt["value"]) for elt in parameters
         )
@@ -105,7 +108,10 @@ class EPSGProjectionMeta(ABCMeta):
         return all_
 
     @staticmethod
-    def projected_shape(bbox: Dict[str, float], transformer):
+    def projected_shape(
+        bbox: Dict[str, float],
+        transformer,
+    ) -> geometry.LineString:
         y0 = bbox["south_latitude"]
         x0 = bbox["east_longitude"]
         y1 = bbox["north_latitude"]
@@ -131,7 +137,9 @@ class EPSGProjectionMeta(ABCMeta):
         crs = CRS(identifier)
         basic_dict = crs.to_dict()
         _log.debug(pprint.pformat(basic_dict))
-        base_class = base_classes.get(basic_dict["proj"], Projection)
+        base_class: Projection = base_classes.get(
+            basic_dict["proj"], Projection
+        )
         _log.debug(f"Generate a class based on {base_class.__name__}")
 
         transformer = Transformer.from_proj(
