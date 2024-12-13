@@ -1,11 +1,11 @@
 [project]
 name = "cartes"
-version = "0.8.3"
+version = "0.8.4"
 description = "A generic toolbox for building maps in Python"
 authors = [{ name = "Xavier Olive", email = "git@xoolive.org" }]
 license = "MIT"
 readme = "readme.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Information Technology",
@@ -19,14 +19,14 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Typing :: Typed",
 ]
 dependencies = [
   "altair>=5.4.1",
   "appdirs>=1.4.4",
   "beautifulsoup4>=4.12.3",
-  "cartopy>=0.23.0; python_version<'3.10'",
-  "cartopy>=0.24.0; python_version>='3.10'",
+  "cartopy>=0.24.0",
   "fastapi>=0.115.0",
   "geopandas>=1.0.1",
   "httpx[http2]>=0.27.2",
@@ -35,13 +35,10 @@ dependencies = [
   "matplotlib>=3.9.2",
   "nest-asyncio>=1.6.0",
   "networkx>=3.2.1",
-  "numpy>=2.0.2; python_version<'3.10'",
-  "numpy>=2.1.2; python_version>='3.10'",
+  "numpy>=2.1.2",
   "pandas>=2.2.3",
-  "pyproj<3.7.1; python_version<'3.10'",
-  "pyproj>=3.7.0; python_version>='3.10'",
-  "scipy>=1.13.1; python_version<'3.10'",
-  "scipy>=1.14.1; python_version>='3.10'",
+  "pyproj>=3.7.0",
+  "scipy>=1.14.1",
   "shapely>=2.0.6",
   "tqdm>=4.66.5",
   "uvicorn>=0.31.0",
@@ -86,7 +83,7 @@ lint.select = [
   "RUF",
 ]
 line-length = 80
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint.isort]
 known-first-party = ["numpy", "pandas", "pyproj", "shapely"]
@@ -95,9 +92,9 @@ known-first-party = ["numpy", "pandas", "pyproj", "shapely"]
 # Specify the target platform details in config, so your developers are
 # free to run mypy on Windows, Linux, or macOS and get consistent
 # results.
-python_version = 3.9
+python_version = "3.10"
 
-exclude = ["_ignore"]
+exclude = ["_ignore", "docs/build/"]
 
 check_untyped_defs = true
 follow_imports = "normal"

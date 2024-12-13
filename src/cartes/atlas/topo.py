@@ -197,11 +197,11 @@ class TopoCatalogue(HTMLMixin):
         return self.df._repr_html_()
 
     @property
-    def url(self):
+    def url(self) -> str:
         return self.df.iloc[0].download_url
 
     @property
-    def path(self):
+    def path(self) -> Path:
         assert self.api is not None
         return Path(self.api.id_) / self.df.iloc[0].path
 
@@ -210,12 +210,12 @@ class TopoCatalogue(HTMLMixin):
         return list(get_json(self)["objects"].keys())
 
     @property
-    def topo_feature(self):
+    def topo_feature(self) -> alt.UrlData:
         feature = self.features[0]
         return alt.topo_feature(self.url, feature=feature)
 
     @property
-    def data(self):
+    def data(self) -> gpd.GeoDataFrame:
         feature = self.features[0]
         return gpd.read_file(
             StringIO(json.dumps(get_json(self))), layout=feature

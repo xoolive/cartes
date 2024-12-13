@@ -24,7 +24,7 @@ import warnings
 from typing import ClassVar, TypedDict
 
 # All projections first come from the regular Cartopy CRS module
-from cartopy.crs import (  # noqa: F401
+from cartopy.crs import (
     Globe,
     InterruptedGoodeHomolosine,
     LambertCylindrical,
@@ -39,7 +39,7 @@ from . import meta
 from .info import valid_crs  # noqa: F401
 
 # These ones can be unpacked in altair!
-from .vega_params import (  # noqa: F401
+from .vega_params import (
     OSGB,
     OSNI,
     UTM,
@@ -60,6 +60,39 @@ from .vega_params import (  # noqa: F401
 )
 
 # fmt: on
+
+__all__ = [
+    "AlbersEqualArea",
+    "AlbersUSA",
+    "AzimuthalEquidistant",
+    "EqualEarth",
+    "EquidistantConic",
+    "EuroPP",
+    "GaussKrueger",
+    "GaussKruger",
+    "Globe",
+    "Gnomonic",
+    "Hartebeesthoek94",
+    "InterruptedGoodeHomolosine",
+    "LambertAzimuthalEqualArea",
+    "LambertConformal",
+    "LambertCylindrical",
+    "Mercator",
+    "Miller",
+    "Mollweide",
+    "Orthographic",
+    "OSGB",
+    "OSNI",
+    "PlateCarree",
+    "Projection",
+    "RDN2008",
+    "Robinson",
+    "RotatedPole",
+    "Sinusoidal",
+    "Stereographic",
+    "TransverseMercator",
+    "UTM",
+]
 
 # Silence a fiona warning
 warnings.simplefilter(action="ignore", category=UserWarning)
