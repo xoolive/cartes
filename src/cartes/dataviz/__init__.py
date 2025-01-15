@@ -4,7 +4,7 @@ from typing import Any, Dict, Union
 
 from . import markers
 
-__all__ = ["matplotlib_style", "markers"]
+__all__ = ["markers", "matplotlib_style"]
 
 matplotlib_style: Dict[str, Dict[str, Union[str, Any]]] = json.loads(
     (Path(__file__).parent / "matplotlib_style.json").read_text()

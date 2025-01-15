@@ -8,4 +8,4 @@ class GoogleTiles(Cache, _GoogleTiles):
     pass
 
 
-__all__ = ["GoogleTiles", "Basemaps"]
+__all__ = ["Basemaps", "GoogleTiles"]
