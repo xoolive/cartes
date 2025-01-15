@@ -253,9 +253,9 @@ class Overpass:
 
     def network_graph(
         self, *args: str, query_str: None | str = None
-    ) -> nx.Graph:
+    ) -> nx.MultiGraph:
         """Nice to have at least "geometry" as one of the args."""
-        graph = nx.Graph()
+        graph = nx.MultiGraph()
         positions = {}
         df = self.parse().query('type_ == "way"')
         if query_str is not None:
