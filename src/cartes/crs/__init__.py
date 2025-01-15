@@ -62,6 +62,10 @@ from .vega_params import (
 # fmt: on
 
 __all__ = [
+    "OSGB",
+    "OSNI",
+    "RDN2008",
+    "UTM",
     "AlbersEqualArea",
     "AlbersUSA",
     "AzimuthalEquidistant",
@@ -81,17 +85,13 @@ __all__ = [
     "Miller",
     "Mollweide",
     "Orthographic",
-    "OSGB",
-    "OSNI",
     "PlateCarree",
     "Projection",
-    "RDN2008",
     "Robinson",
     "RotatedPole",
     "Sinusoidal",
     "Stereographic",
     "TransverseMercator",
-    "UTM",
 ]
 
 # Silence a fiona warning
