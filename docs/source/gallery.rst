@@ -13,6 +13,7 @@ Basic examples
    gallery/terminal
    gallery/mercantour
    gallery/switzerland
+   gallery/hongkong
 
 Advanced examples
 -----------------
