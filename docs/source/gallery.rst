@@ -22,3 +22,4 @@ Advanced examples
 
    gallery/bayern
    gallery/tokyo_metro
+   gallery/graph
