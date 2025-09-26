@@ -57,8 +57,8 @@ Releases = "https://github.com/xoolive/cartes/releases/"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
   "jupyter-sphinx>=0.5.3",
   "mypy>=1.11.2",
   "pre-commit>=3.8.0",
