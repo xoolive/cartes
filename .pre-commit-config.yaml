@@ -6,7 +6,7 @@ repos:
       # Update the uv lockfile
       - id: uv-lock
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v6.0.0
     hooks:
       #- id: check-builtin-literals
       - id: check-case-conflict
