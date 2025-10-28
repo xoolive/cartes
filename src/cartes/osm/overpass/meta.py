@@ -51,15 +51,15 @@ def _feat_tags() -> TaglistType:
 
     features = sorted(
         set(
-            a.attrs["title"].split(":")[1].replace(" ", "_")
+            a.attrs["title"].split(":")[1].replace(" ", "_")  # type: ignore
             for a in e.find_all("a", attrs={"href": re.compile("/wiki/Key:")})
         )
     )
 
     taglist = dict(
         (
-            d.attrs["data-taginfo-taglist-tags"].split("=")[0],
-            d.attrs["data-taginfo-taglist-tags"].split("=")[1].split(","),
+            d.attrs["data-taginfo-taglist-tags"].split("=")[0],  # type: ignore
+            d.attrs["data-taginfo-taglist-tags"].split("=")[1].split(","),  # type: ignore
         )
         for d in e.find_all("div", attrs={"class": "taglist"})
     )

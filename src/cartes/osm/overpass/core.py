@@ -79,7 +79,7 @@ class NodeWayRelation(GeoObject, HBoxMixin, HTMLTitleMixin, HTMLAttrMixin):
         return mapping(self.shape)
 
     @property
-    def html_attr_list(self):
+    def html_attr_list(self):  # type: ignore
         return sorted(
             key
             for key, value in self.json.items()
