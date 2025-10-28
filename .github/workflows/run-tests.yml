@@ -41,13 +41,13 @@ jobs:
             ~/.cache/cartes/
           key: cartes-${{ runner.os }}
 
-      - name: Display Python version
-        run: uv run python -c "import sys; print(sys.version)"
-
       - name: Ubuntu system dependencies
         run: |
           sudo apt update
           sudo apt install -y gdal-bin libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
+
+      - name: Display Python version
+        run: uv run python -c "import sys; print(sys.version)"
 
       - name: Install the project
         run: uv sync --all-extras --dev
