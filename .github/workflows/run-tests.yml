@@ -47,7 +47,7 @@ jobs:
       - name: Ubuntu system dependencies
         run: |
           sudo apt update
-          sudo apt install -y libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
+          sudo apt install -y gdal-bin libgdal-dev libgeos-dev libproj-dev proj-bin proj-data
 
       - name: Install the project
         run: uv sync --all-extras --dev
