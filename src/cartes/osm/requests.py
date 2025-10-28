@@ -28,12 +28,8 @@ _log = logging.getLogger(__name__)
 
 
 def _hash_request(*args, **kwargs) -> str:
-    if "timeout" in kwargs:
-        del kwargs["timeout"]
-
-    if "method" in kwargs:
-        del kwargs["method"]
-
+    kwargs.pop("timeout", None)
+    kwargs.pop("method", None)
     if "data" in kwargs:  # overpass requests
         query = kwargs["data"].replace("\n", "").replace(" ", "")
         hashcode = hashlib.md5(query.encode("utf-8")).hexdigest()

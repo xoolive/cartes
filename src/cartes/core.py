@@ -90,7 +90,7 @@ class GeoObject(ABC):
         return valid_crs(self)
 
     def zoom_level(self) -> int:
-        x1, y1, x2, y2 = self.bounds
+        x1, _y1, x2, _y2 = self.bounds
 
         if x1 == x2:
             return 17

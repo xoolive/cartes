@@ -114,7 +114,7 @@ class Bounds(Generator):
 
     def validate(self, value):
         try:
-            west, south, east, north = value
+            _west, _south, _east, _north = value
             assert all(isinstance(x, Real) for x in value)
         except Exception as exc:
             _log.warning(exc)

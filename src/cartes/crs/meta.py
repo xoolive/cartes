@@ -181,13 +181,13 @@ class EPSGProjectionMeta(ABCMeta):
         )
 
         def x_limits(self):
-            x0, y0, x1, y1 = projected_shape.bounds
+            x0, _y0, x1, _y1 = projected_shape.bounds
             return x0, x1
 
         attr_dict["x_limits"] = property(x_limits)
 
         def y_limits(self):
-            x0, y0, x1, y1 = projected_shape.bounds
+            _x0, y0, _x1, y1 = projected_shape.bounds
             return y0, y1
 
         attr_dict["y_limits"] = property(y_limits)
