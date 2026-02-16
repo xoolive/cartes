@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="docs/source/_static/favicon.png" alt="cartes logo" width="200"/>
+</div>
+
 # Cartes
 
 ![tests](https://github.com/xoolive/cartes/workflows/tests/badge.svg)
