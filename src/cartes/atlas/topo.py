@@ -4,7 +4,6 @@ import asyncio
 import json
 import os
 import re
-import time
 from io import StringIO
 from operator import attrgetter
 from pathlib import Path
@@ -78,8 +77,8 @@ class GithubAPI:
 
     async def async_get_features(self) -> pd.DataFrame:
         headers = dict()
-        if token := os.getenv("GITHUB_TOKEN") is not None:
-            headers["authorization"] = f"{token}"
+        if (token := os.getenv("GITHUB_TOKEN")) is not None:
+            headers["authorization"] = f"Bearer {token}"
         async with httpx.AsyncClient(
             trust_env=True,
             headers=headers,
@@ -88,19 +87,15 @@ class GithubAPI:
             return await self.async_get_recursive(s)
 
     def get_features(self) -> pd.DataFrame:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
 
-        if loop.is_running():  # proxy for Jupyter notebook
-            msg = "For details, run the same command inside a Python console."
-            future = loop.create_task(self.async_get_features())
-            for _ in range(5):
-                if future.done():
-                    result = future.result()
-                    break
-                time.sleep(1)
-            else:
-                future.cancel()
-                raise TimeoutError(msg)
+        if loop is not None and loop.is_running():
+            # Allow nested event loop usage (e.g. in Jupyter/Sphinx)
+            nest_asyncio.apply(loop)
+            result = loop.run_until_complete(self.async_get_features())
         else:
             result = asyncio.run(self.async_get_features())
 
