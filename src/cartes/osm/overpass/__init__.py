@@ -377,6 +377,11 @@ class Overpass:
                         "role": entry["role"],
                         "geometry": to_geometry(entry)
                         if entry.get("geometry", None)
+                        or (
+                            entry["type"] == "node"
+                            and "lon" in entry
+                            and "lat" in entry
+                        )
                         else None,
                     }
                     for entry in elt.get("members", [])
