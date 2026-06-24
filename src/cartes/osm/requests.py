@@ -15,10 +15,10 @@ JSONType = Any
 GeoJSONType = Any
 
 DEFAULT_HEADERS = {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0)"
-    "Gecko/20100101 Firefox/116.0",
-    "Accept": "text/html,application/xhtml+xml,application/xml;"
-    "q=0.9,image/avif,image/webp,*/*;q=0.8",
+    # overpass-api.de rejects stock/faked browser User-Agents with HTTP 406.
+    # See https://github.com/drolbr/Overpass-API/issues/791
+    "User-Agent": "cartes (https://github.com/xoolive/cartes)",
+    "Accept": "application/json",
     "Accept-Language": "en-US,en;q=0.5",
     "Accept-Encoding": "gzip, deflate, br",
 }
@@ -85,16 +85,16 @@ def json_request(
     _log.info(f"Sending POST request to {url} with {kwargs}")
 
     new_kwargs = kwargs.copy()
-    if "data" in new_kwargs:
+    if "data" in new_kwargs and isinstance(new_kwargs["data"], str):
         new_kwargs["data"] = new_kwargs["data"].encode("utf-8")
 
-    request = httpx.Request(
+    response = client.request(
         method=method,
         url=url,
         headers=DEFAULT_HEADERS,
-        **kwargs,
+        timeout=timeout,
+        **new_kwargs,
     )
-    response = client.send(request)
 
     if response.status_code == 403:  # forbidden for url
         msg = "Error 403: IP address may be blocked"
