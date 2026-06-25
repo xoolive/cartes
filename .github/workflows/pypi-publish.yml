@@ -1,10 +1,13 @@
-# This workflows will upload a Python Package using Twine when a release is created
+# This workflows will upload a Python Package when a release tag is pushed
 name: publish
 
 on:
-  release:
-    types: [published]
-  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
 
 jobs:
   deploy:
@@ -22,6 +25,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Check version matches tag
+        run: |
+          VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
+          TAG="${GITHUB_REF_NAME#v}"
+          test "$VERSION" = "$TAG"
+
       - name: Build packages
         run: |
           uvx hatchling build
@@ -31,3 +40,9 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
